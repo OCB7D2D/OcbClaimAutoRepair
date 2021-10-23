@@ -1,0 +1,28 @@
+<configs>
+
+	<append xpath="/blocks">
+
+		<block name="ocbBlockClaimAutoRepair">
+			<property name="Class" value="LandClaim"/>
+			<property name="CreativeMode" value="Player"/>
+			<property name="Material" value="Msteel"/>
+			<property name="DisplayType" value="blockHardened"/>
+			<property name="Texture" value="189"/>
+			<property name="Weight" value="0"/>
+			<property name="SortOrder2" value="0050"/> <!-- SortShape -->
+			<property class="RepairItems"> <property name="resourceRockSmall" value="10"/> </property>
+			<property name="IndexName" value="lpblock"/>
+			<drop event="Destroy" count="0"/>
+			<property name="Stacknumber" value="1"/>
+			<property name="TakeDelay" value="30"/>
+			<property name="Group" value="Building,advBuilding"/>
+			<property name="EconomicValue" value="1"/>
+			<property name="SellableToTrader" value="false"/>
+			<property name="PlacementDistance" value="25"/>
+			<property name="FilterTags" value="fbuilding"/>
+			<property name="DisplayInfo" value="Custom"/>
+			<property name="UseGlobalUV" value="Local"/> <!-- players want to see the flag rotated correctly -->
+		</block>
+	</append>
+
+</configs>
