@@ -1,0 +1,3 @@
+Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish
+ocbBlockClaimAutoRepair,UI,Menu,,,Claim Auto Repair
+ocbBlockClaimAutoRepairDesc,UI,Menu,,,Automatically repairs blocks in its perimeter if the necessary materials are available in the container.

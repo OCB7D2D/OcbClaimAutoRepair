@@ -6,60 +6,66 @@ using System.Reflection;
 public class OcbClaimAutoRepair
 {
 
-    // Entry class for Harmony patching
-    public class OcbClaimAutoRepair_Init : IHarmony	
-    {
-        public void Start()
-        {
-            Debug.Log("Loading OCB Claim Auto Repair Patch: " + GetType().ToString());
-            var harmony = new Harmony(GetType().ToString());
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
-        }
-    }
-    
-    [HarmonyPatch(typeof(TileEntityLandClaim))]
-    [HarmonyPatch("UpdateTick")]
-    public class TileEntityLandClaim_UpdateTick
-    {
-        static void Postfix(TileEntityLandClaim __instance)
-        {
-			World world = GameManager.Instance.World;
-			// object[] data = (object[]) timerData.Data;
-			// int _clrIdx = (int) data[0];
-			// BlockValue blockValue = (BlockValue) data[1];
-			// Vector3i vector3i = (Vector3i) data[2];
-			// BlockValue block = world.GetBlock(vector3i);
-
-			var worldPos = __instance.ToWorldPos().ToVector3();
-
-			for (int i = 0; i < 250; i ++) {
-
-			var Pos = worldPos - Origin.position;// + new Vector3(0.5f, 0.0f, 0.5f);
-
-				Pos += new Vector3(
-					Random.Range(-3, 3),
-					Random.Range(-3, 3),
-					Random.Range(-3, 3)
-				);
-
-				BlockValue blockValue = world.GetBlock(new Vector3i(Pos));
-				// var asd = blockValue.block;
-				// TileEntity titty =_world.GetTileEntity(_cIdx, _blockPos);
-				// int blockType = blockValue.type;
-
-
-				if (blockValue.damage > 0) {
-
-Block ls = blockValue.Block;
-
-					Log.Out("UpdateTick Land-Claim " + worldPos + " vs " + Origin.position + " vs " + Pos);
-					// Log.Out("Block is " + blockValue + " vs " + blockType + " other " + blockValue.RepairItems);
-					Log.Out("Needs repair " + blockValue.Block);
-					break;
-				}
-        	}
+	// Entry class for Harmony patching
+	public class OcbClaimAutoRepair_Init : IHarmony	
+	{
+		public void Start()
+		{
+			Debug.Log("Loading OCB Claim Auto Repair Patch: " + GetType().ToString());
+			var harmony = new Harmony(GetType().ToString());
+			harmony.PatchAll(Assembly.GetExecutingAssembly());
 		}
+	}
 
-    }
+	[HarmonyPatch(typeof(TileEntity))]
+	[HarmonyPatch("Instantiate")]
+	public class TileEntity_Instantiate
+	{
+		public static bool Prefix(TileEntityType type, Chunk _chunk, ref TileEntity __result)
+		{
+			if (type == (TileEntityType)242) {
+				__result = (TileEntity) new TileEntityClaimAutoRepairContainer(_chunk);
+				return false;
+			}
+			return true;
+		}
+	}
+
+	[HarmonyPatch(typeof(BlockSecureLoot))]
+	[HarmonyPatch("OnBlockAdded")]
+	public class BlockSecureLoot_OnBlockAdded
+	{
+		public static bool Prefix(
+			BlockSecureLoot __instance,
+			WorldBase world,
+			Chunk _chunk,
+			Vector3i _blockPos,
+			BlockValue _blockValue,
+			int ___lootList)
+		{
+			if (__instance.Properties.Values.ContainsKey("CustomIcon")) {
+				var icon = __instance.Properties.Values["CustomIcon"];
+				if (icon == "ClaimAutoRepair") {
+
+					if (_blockValue.ischild)
+						return true;
+ 
+					__instance.shape.OnBlockAdded(world, _chunk, _blockPos, _blockValue);
+
+					if (__instance.isMultiBlock)
+						__instance.multiBlockPos.AddChilds(world, _chunk, _chunk.ClrIdx, _blockPos, _blockValue);
+
+					TileEntitySecureLootContainer secureLootContainer = new TileEntityClaimAutoRepairContainer(_chunk);
+					secureLootContainer.localChunkPos = World.toBlock(_blockPos);
+					secureLootContainer.lootListIndex = (int)(ushort)___lootList;
+					secureLootContainer.SetContainerSize(LootContainer.lootList[___lootList].size);
+					_chunk.AddTileEntity((TileEntity)secureLootContainer);
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
 
 }

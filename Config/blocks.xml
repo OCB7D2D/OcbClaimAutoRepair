@@ -1,27 +1,37 @@
 <configs>
 
 	<append xpath="/blocks">
-
 		<block name="ocbBlockClaimAutoRepair">
-			<property name="Class" value="LandClaim"/>
+			<property name="UnlockedBy" value="perkAdvancedEngineering"/>
 			<property name="CreativeMode" value="Player"/>
+			<property name="Tags" value="door"/>
+			<property name="Class" value="SecureLoot"/>
+			<property name="CustomIcon" value="ClaimAutoRepair"/>
 			<property name="Material" value="Msteel"/>
+			<property name="StabilitySupport" value="true"/>
+			<property name="Shape" value="ModelEntity" />
+			<property name="Model" value="#@modfolder:Resources/ClaimAutoRepair.unity3d?ClaimAutoRepairPrefab" />
+			<property name="IsTerrainDecoration" value="false"/>
+			<property name="Collide" value="movement,melee,bullet,arrow,rocket"/>
+			<property name="LootList" value="1"/>
+			<property name="LPHardnessScale" value="8"/>
+			<property name="Group" value="Basics,Building,advBuilding"/>
+			<property name="DescriptionKey" value="ocbBlockClaimAutoRepairDesc"/>
+			<property name="EconomicValue" value="10"/>
+			<property name="EconomicBundleSize" value="10"/>
+			<property name="FilterTags" value="floot"/>
 			<property name="DisplayType" value="blockHardened"/>
-			<property name="Texture" value="189"/>
-			<property name="Weight" value="0"/>
-			<property name="SortOrder2" value="0050"/> <!-- SortShape -->
-			<property class="RepairItems"> <property name="resourceRockSmall" value="10"/> </property>
-			<property name="IndexName" value="lpblock"/>
-			<drop event="Destroy" count="0"/>
-			<property name="Stacknumber" value="1"/>
-			<property name="TakeDelay" value="30"/>
-			<property name="Group" value="Building,advBuilding"/>
-			<property name="EconomicValue" value="1"/>
-			<property name="SellableToTrader" value="false"/>
-			<property name="PlacementDistance" value="25"/>
-			<property name="FilterTags" value="fbuilding"/>
-			<property name="DisplayInfo" value="Custom"/>
-			<property name="UseGlobalUV" value="Local"/> <!-- players want to see the flag rotated correctly -->
+
+			<property class="RepairItems">
+				<property name="resourceForgedSteel" value="40"/>
+				<property name="resourceElectricParts" value="40"/>
+				<property name="resourceMechanicalParts" value="10"/>
+			</property>
+
+			<drop event="Destroy" name="resourceForgedSteel" count="5,10"/>
+			<drop event="Destroy" name="resourceElectricParts" count="5,20" tag="salvageHarvest"/>
+			<drop event="Destroy" name="resourceMechanicalParts" count="5,10" tag="salvageHarvest"/>
+			<drop event="Fall" name="scrapMetalPile" count="1" prob="0.75" stick_chance="1"/>
 		</block>
 	</append>
 
