@@ -3,8 +3,10 @@ using Audio;
 using HarmonyLib;
 using UnityEngine;
 using System.Reflection;
+using System.Collections;
+using System.Collections.Generic;
 
-public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
+public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 {
 
 	// how much damage repair per tick
@@ -26,9 +28,16 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 	// To calculate amount of items needed for repair
 	public float damagePerc;
 
-	public TileEntityClaimAutoRepairContainer(Chunk _chunk)
+	// Flag only for server side code
+	public bool isAccessed;
+
+	// Copied from LandClaim code
+	public Transform BoundsHelper;
+
+	public TileEntityClaimAutoRepair(Chunk _chunk)
 		: base(_chunk)
 	{
+		isAccessed = false;
 		repairBlock = BlockValue.Air;
 		repairDamage = 0.0f;
 		damagePerc = 0.0f;
@@ -72,7 +81,8 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 			// ToDo: how expensive is this call for `GetItem(string)`?
 			if (stack.itemValue.type == ItemClass.GetItem(sitem.ItemName).type)
 			{
-				having += stack.count;
+				// Always leave at least one item in the slot
+				having += stack.count - 1;
 			}
 		}
 		return having;
@@ -85,7 +95,7 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 		{
 			int needed = block.RepairItems[i].Count;
 			needed = (int)Mathf.Ceil(damagePerc * needed);
-			if (GetItemCount(block.RepairItems[i]) < needed)
+			if (GetItemCount(block.RepairItems[i]) <= needed)
 			{
 				return false;
 			}
@@ -127,6 +137,7 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 	public void TickRepair(World world)
 	{
 
+		Vector3i worldPosI = ToWorldPos();
 		Vector3 worldPos = ToWorldPos().ToVector3();
 
 		// ToDo: probably don't need to recalculate on each tick since we reset on damage changes
@@ -141,23 +152,12 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 			// Check if any of the stats chaged after we acquired to block
 			if (currentValue.type != repairBlock.type || currentValue.damage != repairBlock.damage)
 			{
+				// Reset the acquired block and play a sound bit
 				// Play different sound according to reason of disconnect
-				if (currentValue.type != repairBlock.type)
-				{
-					// Block has been switched (maybe destroyed, upgraded, etc.)
-					world.GetGameManager().PlaySoundAtPositionServer(worldPos,
-						"weapon_jam", AudioRolloffMode.Logarithmic, 100);
-				}
-				else
-				{
-					// Block has been damaged again, abort repair on progress
-					world.GetGameManager().PlaySoundAtPositionServer(worldPos,
-						"ItemNeedsRepair", AudioRolloffMode.Logarithmic, 100);
-				}
-				// Reset the acquired block
-				repairBlock = BlockValue.Air;
-				damagePerc = 0.0f;
-				repairDamage = 0.0f;
+				// Block has been switched (maybe destroyed, upgraded, etc.)
+				// Block has been damaged again, abort repair on progress
+				ResetAcquiredBlock(currentValue.type != repairBlock.type ?
+					"weapon_jam" : "ItemNeedsRepair");
 				return;
 			}
 
@@ -170,12 +170,7 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 				// Safety check if materials have changed
 				if (!CanRepairBlock(Block.list[repairBlock.type])) {
 					// Inventory seems to have changed (not repair possible)
-					world.GetGameManager().PlaySoundAtPositionServer(worldPos,
-						"weapon_jam", AudioRolloffMode.Logarithmic, 100);
-					// Reset the acquired block
-					repairBlock = BlockValue.Air;
-					damagePerc = 0.0f;
-					repairDamage = 0.0f;
+					ResetAcquiredBlock("weapon_jam");
 					return;
 				}
 				// Need to get the chunk first in order to alter the block?
@@ -189,16 +184,21 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 					// Take the repair materials from the container
 					// ToDo: what if materials have gone missing?
 					TakeRepairMaterials(repairBlock.Block);
+					// BroadCast the changes done to the block
+					world.SetBlocksRPC(new List<BlockChangeInfo>()
+					{
+						new BlockChangeInfo(repairPosition, repairBlock, false, true)
+					});
 					// Get material to play material specific sound
 					var material = repairBlock.Block.blockMaterial.SurfaceCategory;
 					world.GetGameManager().PlaySoundAtPositionServer(worldPos,
 						string.Format("ImpactSurface/metalhit{0}", material),
 						AudioRolloffMode.Logarithmic, 100);
+					// Update clients
+					SetModified();
 				}
 				// Reset acquired block
-				repairBlock = BlockValue.Air;
-				damagePerc = 0.0f;
-				repairDamage = 0.0f;
+				ResetAcquiredBlock();
 			}
 			else
 			{
@@ -212,7 +212,10 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 		{
 
 			// Get size of land claim blocks to look for valid blocks to repair
-			int size = GamePrefs.GetInt(EnumGamePrefs.LandClaimSize) / 2 + 5;
+			int size = (GamePrefs.GetInt(EnumGamePrefs.LandClaimSize) - 1) / 2 + 5;
+
+			// Speed up finding of blocks (for easier debugging purpose only!)
+			// int n = 0; while (++n < 500 && repairBlock.type == BlockValue.Air.type)
 
 			// Simple and crude random block acquiring
 			for (int i = 1; i <= size; i += 1)
@@ -235,10 +238,15 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 					{
 						continue;
 					}
+					// Play simple click indicating we are working on something
+					world.GetGameManager().PlaySoundAtPositionServer(worldPos,
+						"Misc/locking", AudioRolloffMode.Logarithmic, 25);
 					// Acquire the block to repair
 					repairPosition = randomPos;
 					repairBlock = blockValue;
 					repairDamage = 0.0f;
+					EnableBoundHelper();
+					SetModified();
 					break;
 				}
 			}
@@ -246,16 +254,85 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 		}
 	}
 
-	public override void UpdateTick(World world)
+	public override void read(PooledBinaryReader _br, TileEntity.StreamModeRead _eStreamMode)
 	{
-
-		// Check if storage is being accessed
-		if (bUserAccessing)
+		base.read(_br, _eStreamMode);
+		bool isEnabled = false;
+		switch (_eStreamMode)
 		{
+		case TileEntity.StreamModeRead.Persistency:
+			break;
+		case TileEntity.StreamModeRead.FromServer:
+			isEnabled = _br.ReadBoolean();
+			this.repairPosition.x = _br.ReadInt32();
+			this.repairPosition.y = _br.ReadInt32();
+			this.repairPosition.z = _br.ReadInt32();
+			break;
+		case TileEntity.StreamModeRead.FromClient:
+			this.isAccessed = _br.ReadBoolean();
+			break;
+		}
+		// A bit weird to have this here!?
+		if (isEnabled && !IsUserAccessing()) {
+			EnableBoundHelper();
+		} else {
+			DisableBoundHelper();
+		}
+		// Check if anybody is accessing the container
+		if (IsUserAccessing() || isAccessed)
+		{
+			ResetAcquiredBlock("weapon_jam");
+		}
+
+	}
+
+	public override void write(PooledBinaryWriter _bw, TileEntity.StreamModeWrite _eStreamMode)
+	{
+		base.write(_bw, _eStreamMode);
+		switch (_eStreamMode)
+		{
+		case TileEntity.StreamModeWrite.Persistency:
+			break;
+		case TileEntity.StreamModeWrite.ToServer:
+			_bw.Write(IsUserAccessing());
+			break;
+		case TileEntity.StreamModeWrite.ToClient:
+			_bw.Write(repairBlock.type != BlockValue.Air.type);
+			_bw.Write(this.repairPosition.x);
+			_bw.Write(this.repairPosition.y);
+			_bw.Write(this.repairPosition.z);
+			break;
+		}
+	}
+
+	public void ResetAcquiredBlock(string playSound = "", bool broadcast = true)
+	{
+		if (repairBlock.type != BlockValue.Air.type) {
+			// Play optional sound
+			if (playSound != "") {
+				GameManager.Instance.PlaySoundAtPositionServer(
+					ToWorldPos().ToVector3(), playSound,
+					AudioRolloffMode.Logarithmic, 100);
+			}
 			// Reset acquired repair block
 			repairBlock = BlockValue.Air;
 			damagePerc = 0.0f;
 			repairDamage = 0.0f;
+			DisableBoundHelper();
+			if (broadcast) {
+				SetModified();
+			}
+		}
+	}
+
+	public override void UpdateTick(World world)
+	{
+		base.UpdateTick(world);
+
+		// Check if storage is being accessed
+		if (IsUserAccessing() || isAccessed)
+		{
+			ResetAcquiredBlock("weapon_jam");
 		}
 		else
 		{
@@ -263,7 +340,38 @@ public class TileEntityClaimAutoRepairContainer : TileEntitySecureLootContainer
 			TickRepair(world);
 		}
 
-		base.UpdateTick(world);
+	}
+
+	public override void SetUserAccessing(bool _bUserAccessing) 
+	{
+		if (IsUserAccessing() != _bUserAccessing) {
+			base.SetUserAccessing(_bUserAccessing);
+			if (_bUserAccessing) {
+				ResetAcquiredBlock("weapon_jam", false);
+				SetModified(); // Force update
+			}
+			// SetModified is already called OnClose
+		}
+	}
+
+	public void EnableBoundHelper()
+	{
+		if (BoundsHelper == null) return;
+		BoundsHelper.localPosition = repairPosition.ToVector3() -
+			Origin.position + new Vector3(0.5f, 0.5f, 0.5f);
+		foreach (Renderer componentsInChild in BoundsHelper.GetComponentsInChildren<Renderer>())
+			componentsInChild.material.SetColor("_Color", Color.yellow * 0.5f);
+		BoundsHelper.gameObject.SetActive(true);
+	}
+
+	public void DisableBoundHelper()
+	{
+		if (BoundsHelper == null) return;
+		BoundsHelper.localPosition = ToWorldPos().ToVector3() -
+			Origin.position + new Vector3(0.5f, 0.5f, 0.5f);
+		foreach (Renderer componentsInChild in BoundsHelper.GetComponentsInChildren<Renderer>())
+			componentsInChild.material.SetColor("_Color", Color.gray * 0.5f);
+		BoundsHelper.gameObject.SetActive(true);
 	}
 
 }
