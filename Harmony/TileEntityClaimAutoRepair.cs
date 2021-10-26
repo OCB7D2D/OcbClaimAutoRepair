@@ -82,7 +82,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 			if (stack.itemValue.type == ItemClass.GetItem(sitem.ItemName).type)
 			{
 				// Always leave at least one item in the slot
-				having += stack.count - 1;
+				having += stack.count;
 			}
 		}
 		return having;
@@ -95,7 +95,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 		{
 			int needed = block.RepairItems[i].Count;
 			needed = (int)Mathf.Ceil(damagePerc * needed);
-			if (GetItemCount(block.RepairItems[i]) <= needed)
+			if (GetItemCount(block.RepairItems[i]) < needed)
 			{
 				return false;
 			}
