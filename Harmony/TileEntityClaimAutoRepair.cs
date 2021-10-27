@@ -44,7 +44,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 			if (this.isOn != value) {
 				this.isOn = value;
 				repairBlock = BlockValue.Air;
-				repairPosition *= 0;
+				repairPosition = ToWorldPos();
 				damagePerc = 0.0f;
 				repairDamage = 0.0f;
 				DisableBoundHelper();
@@ -297,7 +297,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 			break;
 		}
 		// A bit weird to have this here!?
-		if (isEnabled && !IsUserAccessing()) {
+		if (isOn && isEnabled && !IsUserAccessing() && !isAccessed) {
 			EnableBoundHelper();
 		} else {
 			DisableBoundHelper();
@@ -341,7 +341,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 			}
 			// Reset acquired repair block
 			repairBlock = BlockValue.Air;
-			repairPosition *= 0;
+			repairPosition = ToWorldPos();
 			damagePerc = 0.0f;
 			repairDamage = 0.0f;
 			DisableBoundHelper();

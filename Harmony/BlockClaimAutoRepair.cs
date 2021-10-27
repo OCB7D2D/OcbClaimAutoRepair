@@ -37,6 +37,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		BlockValue _blockValue)
 	{
 		base.OnBlockLoaded(_world, _clrIdx, _blockPos, _blockValue);
+		if (SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer) return;
 		if (_world.GetTileEntity(_clrIdx, _blockPos) is TileEntityClaimAutoRepair tileEntityLandAutoRepair)
 		{
 			Transform boundsHelper = LandClaimBoundsHelper.GetBoundsHelper(_blockPos.ToVector3());
@@ -101,6 +102,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		_chunk.AddTileEntity((TileEntity) tileEntity);
 
 		base.OnBlockAdded(_world, _chunk, _blockPos, _blockValue);
+		if (SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer) return;
 		if (_world.GetTileEntity(_chunk.ClrIdx, _blockPos) is TileEntityClaimAutoRepair tileEntityLandAutoRepair)
 		{
 			Transform boundsHelper = LandClaimBoundsHelper.GetBoundsHelper(_blockPos.ToVector3());
