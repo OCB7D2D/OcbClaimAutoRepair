@@ -1,3 +1,5 @@
 Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish
 ocbBlockClaimAutoRepair,UI,Menu,,,Claim Auto Repair
-ocbBlockClaimAutoRepairDesc,UI,Menu,,,Automatically repairs blocks in its perimeter if the necessary materials are available in the container.
+ocbBlockClaimAutoRepairDesc,UI,Menu,,,Automatically repairs blocks in its perimeter, within owner or allied claim, if the necessary materials are available in the container.
+blockcommand_turn_claimautorep_off,UI,Menu,,,Turn Off
+blockcommand_turn_claimautorep_on,UI,Menu,,,Turn On

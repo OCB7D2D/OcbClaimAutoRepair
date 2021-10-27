@@ -34,9 +34,29 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 	// Copied from LandClaim code
 	public Transform BoundsHelper;
 
+	private bool isOn;
+
+	public bool IsOn
+	{
+		get => this.isOn;
+		set
+		{
+			if (this.isOn != value) {
+				this.isOn = value;
+				repairBlock = BlockValue.Air;
+				repairPosition *= 0;
+				damagePerc = 0.0f;
+				repairDamage = 0.0f;
+				DisableBoundHelper();
+				this.SetModified();
+			}
+		}
+	}
+
 	public TileEntityClaimAutoRepair(Chunk _chunk)
 		: base(_chunk)
 	{
+		isOn = false;
 		isAccessed = false;
 		repairBlock = BlockValue.Air;
 		repairDamage = 0.0f;
@@ -234,7 +254,10 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 					// ToDo: Not sure if this is the best way to check this, but it should work
 					PersistentPlayerList persistentPlayerList = world.GetGameManager().GetPersistentPlayerList();
 					PersistentPlayerData playerData = persistentPlayerList.GetPlayerData(this.GetOwner());
-					if (!world.CanPlaceBlockAt(randomPos, playerData))
+					int claimSize = (GameStats.GetInt(EnumGameStats.LandClaimSize) - 1) / 2;
+					// int deadZone = GameStats.GetInt(EnumGameStats.LandClaimDeadZone) + claimSize;
+					Chunk chunkFromWorldPos = (Chunk) world.GetChunkFromWorldPos(randomPos);
+					if (!IsBlockInsideClaim(world, chunkFromWorldPos, randomPos, playerData, claimSize, true))
 					{
 						continue;
 					}
@@ -257,7 +280,8 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 	public override void read(PooledBinaryReader _br, TileEntity.StreamModeRead _eStreamMode)
 	{
 		base.read(_br, _eStreamMode);
-		bool isEnabled = false;
+		this.isOn = _br.ReadBoolean();
+		bool isEnabled = isOn;
 		switch (_eStreamMode)
 		{
 		case TileEntity.StreamModeRead.Persistency:
@@ -289,6 +313,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 	public override void write(PooledBinaryWriter _bw, TileEntity.StreamModeWrite _eStreamMode)
 	{
 		base.write(_bw, _eStreamMode);
+		_bw.Write(isOn);
 		switch (_eStreamMode)
 		{
 		case TileEntity.StreamModeWrite.Persistency:
@@ -316,6 +341,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 			}
 			// Reset acquired repair block
 			repairBlock = BlockValue.Air;
+			repairPosition *= 0;
 			damagePerc = 0.0f;
 			repairDamage = 0.0f;
 			DisableBoundHelper();
@@ -328,6 +354,8 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 	public override void UpdateTick(World world)
 	{
 		base.UpdateTick(world);
+
+		if (!IsOn) return;
 
 		// Check if storage is being accessed
 		if (IsUserAccessing() || isAccessed)
@@ -361,7 +389,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 			Origin.position + new Vector3(0.5f, 0.5f, 0.5f);
 		foreach (Renderer componentsInChild in BoundsHelper.GetComponentsInChildren<Renderer>())
 			componentsInChild.material.SetColor("_Color", Color.yellow * 0.5f);
-		BoundsHelper.gameObject.SetActive(true);
+		BoundsHelper.gameObject.SetActive(this.isOn);
 	}
 
 	public void DisableBoundHelper()
@@ -371,7 +399,51 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 			Origin.position + new Vector3(0.5f, 0.5f, 0.5f);
 		foreach (Renderer componentsInChild in BoundsHelper.GetComponentsInChildren<Renderer>())
 			componentsInChild.material.SetColor("_Color", Color.gray * 0.5f);
-		BoundsHelper.gameObject.SetActive(true);
+		BoundsHelper.gameObject.SetActive(this.isOn);
+	}
+
+	private bool IsBlockInsideClaim(
+		World world,
+		Chunk chunk,
+		Vector3i blockPos,
+		PersistentPlayerData lpRelative,
+		int claimSize,
+		bool includeAllies)
+	{
+		PersistentPlayerList persistentPlayerList = world.gameManager.GetPersistentPlayerList();
+		List<Vector3i> indexedBlock = chunk.IndexedBlocks["lpblock"];
+		if (indexedBlock != null)
+		{
+			Vector3i worldPos = chunk.GetWorldPos();
+			for (int index = 0; index < indexedBlock.Count; ++index)
+			{
+				Vector3i pos = indexedBlock[index] + worldPos;
+				if (BlockLandClaim.IsPrimary(chunk.GetBlock(indexedBlock[index])))
+				{
+					int num1 = Mathf.Abs(pos.x - blockPos.x);
+					int num2 = Mathf.Abs(pos.z - blockPos.z);
+					if (num1 <= claimSize && num2 <= claimSize)
+					{
+						PersistentPlayerData protectionBlockOwner = persistentPlayerList.GetLandProtectionBlockOwner(pos);
+						if (protectionBlockOwner != null)
+						{
+							bool flag = world.IsLandProtectionValidForPlayer(protectionBlockOwner);
+							if (flag && lpRelative != null)
+							{
+								if (lpRelative == protectionBlockOwner) flag = true;
+								else if (includeAllies && protectionBlockOwner.ACL != null &&
+										 protectionBlockOwner.ACL.Contains(lpRelative.PlayerId)) {
+									flag = true;
+								}
+							}
+							if (flag)
+								return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 }

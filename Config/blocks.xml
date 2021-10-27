@@ -32,6 +32,10 @@
 			<drop event="Destroy" name="resourceElectricParts" count="5,20" tag="salvageHarvest"/>
 			<drop event="Destroy" name="resourceMechanicalParts" count="5,10" tag="salvageHarvest"/>
 			<drop event="Fall" name="scrapMetalPile" count="1" prob="0.75" stick_chance="1"/>
+
+			<property name="CanPickup" value="true" />
+			<property name="TakeDelay" value="30"/>
+
 		</block>
 	</append>
 
