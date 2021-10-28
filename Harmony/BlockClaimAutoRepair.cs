@@ -37,7 +37,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		BlockValue _blockValue)
 	{
 		base.OnBlockLoaded(_world, _clrIdx, _blockPos, _blockValue);
-		if (SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer) return;
+		if (GameManager.IsDedicatedServer) return;
 		if (_world.GetTileEntity(_clrIdx, _blockPos) is TileEntityClaimAutoRepair tileEntityLandAutoRepair)
 		{
 			Transform boundsHelper = LandClaimBoundsHelper.GetBoundsHelper(_blockPos.ToVector3());
@@ -46,7 +46,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 				boundsHelper.localScale = new Vector3(BoundHelperSize, BoundHelperSize, BoundHelperSize);
 				boundsHelper.localPosition = new Vector3(_blockPos.x + 0.5f, _blockPos.y + 0.5f, _blockPos.z + 0.5f);
 				tileEntityLandAutoRepair.BoundsHelper = boundsHelper;
-				tileEntityLandAutoRepair.DisableBoundHelper();
+				tileEntityLandAutoRepair.ResetBoundHelper();
 			}
 		}
 	}
@@ -102,7 +102,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		_chunk.AddTileEntity((TileEntity) tileEntity);
 
 		base.OnBlockAdded(_world, _chunk, _blockPos, _blockValue);
-		if (SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer) return;
+		if (GameManager.IsDedicatedServer) return;
 		if (_world.GetTileEntity(_chunk.ClrIdx, _blockPos) is TileEntityClaimAutoRepair tileEntityLandAutoRepair)
 		{
 			Transform boundsHelper = LandClaimBoundsHelper.GetBoundsHelper(_blockPos.ToVector3());
@@ -111,7 +111,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 				boundsHelper.localScale = new Vector3(BoundHelperSize, BoundHelperSize, BoundHelperSize);
 				boundsHelper.localPosition = new Vector3(_blockPos.x + 0.5f, _blockPos.y + 0.5f, _blockPos.z + 0.5f);
 				tileEntityLandAutoRepair.BoundsHelper = boundsHelper;
-				tileEntityLandAutoRepair.DisableBoundHelper();
+				tileEntityLandAutoRepair.ResetBoundHelper();
 			}
 		}
 	}
