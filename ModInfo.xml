@@ -4,7 +4,7 @@
 		<Name value="ClaimAutoRepair" />
 		<Description value="Auto repair blocks in your claim vicinity" />
 		<Website value="https://github.com/OCB7D2D/ClaimAutoRepair" />
-		<Author value="mgreter" />
-		<Version value="0.1" />
+		<Author value="ocbMaurice" />
+		<Version value="0.1.0" />
 	</ModInfo>
 </xml>
