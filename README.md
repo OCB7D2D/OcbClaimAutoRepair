@@ -75,6 +75,10 @@ compilation. Note that the resulting dlls will be put under
 `build/bin/target/AutoClaimRepair.dll`. You need to move them
 over to the folder root in order for 7D2D to pick it up.
 
+```batch
+PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed
+```
+
 ## Changelog
 
 ### Version 0.7.0
