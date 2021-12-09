@@ -5,7 +5,7 @@
 			<property name="UnlockedBy" value="perkAdvancedEngineering"/>
 			<property name="CreativeMode" value="Player"/>
 			<property name="Tags" value="door"/>
-			<property name="Class" value="ClaimAutoRepair, Harmony-ClaimAutoRepair"/>
+			<property name="Class" value="ClaimAutoRepair, ClaimAutoRepair"/>
 			<property name="CustomIcon" value="ClaimAutoRepair"/>
 			<property name="Material" value="Msteel"/>
 			<property name="StabilitySupport" value="true"/>
@@ -13,7 +13,7 @@
 			<property name="Model" value="#@modfolder:Resources/ClaimAutoRepair.unity3d?ClaimAutoRepairPrefab" />
 			<property name="IsTerrainDecoration" value="false"/>
 			<property name="Collide" value="movement,melee,bullet,arrow,rocket"/>
-			<property name="LootList" value="1"/>
+			<property name="LootList" value="storageCrate"/>
 			<property name="LPHardnessScale" value="8"/>
 			<property name="Group" value="Basics,Building,advBuilding"/>
 			<property name="DescriptionKey" value="ocbBlockClaimAutoRepairDesc"/>

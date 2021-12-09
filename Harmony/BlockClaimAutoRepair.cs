@@ -1,16 +1,14 @@
-using DMT;
-using Audio;
 using System;
-using HarmonyLib;
 using UnityEngine;
-using System.Reflection;
 
 public class BlockClaimAutoRepair : BlockSecureLoot
 {
 
-	const float BoundHelperSize = 2.59f;
+	private Vector2i LootSize = new Vector2i(8, 4);
 
-	float TakeDelay = 30f;
+	private float BoundHelperSize = 2.59f;
+
+	private float TakeDelay = 30f;
 
 	// Copied from vanilla BlockLandClaim code
 	// public override void OnBlockEntityTransformBeforeActivated(
@@ -26,7 +24,8 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 	public override void Init()
 	{
 		base.Init();
-		this.TakeDelay = !this.Properties.Values.ContainsKey("TakeDelay") ? 2f : StringParsers.ParseFloat(this.Properties.Values["TakeDelay"]);
+		this.TakeDelay = !this.Properties.Values.ContainsKey("TakeDelay") ? 2f
+			: StringParsers.ParseFloat(this.Properties.Values["TakeDelay"]);
 	}
 
 	// Copied from vanilla BlockLandClaim code
@@ -76,8 +75,8 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 			Chunk chunkFromWorldPos = (Chunk) _world.GetChunkFromWorldPos(_blockPos);
 			TileEntityClaimAutoRepair tileEntity = new TileEntityClaimAutoRepair(chunkFromWorldPos);
 			tileEntity.localChunkPos = World.toBlock(_blockPos);
-			tileEntity.lootListIndex = (int) (ushort) this.lootList;
-			tileEntity.SetContainerSize(LootContainer.lootList[this.lootList].size);
+			tileEntity.lootListName = this.lootList;
+			tileEntity.SetContainerSize(LootSize, false);
 			chunkFromWorldPos.AddTileEntity((TileEntity) tileEntity);
 		}
 
@@ -97,8 +96,8 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		// Overload TileEntity creation (base method should still recognize this)
 		TileEntityClaimAutoRepair tileEntity = new TileEntityClaimAutoRepair(_chunk);
 		tileEntity.localChunkPos = World.toBlock(_blockPos);
-		tileEntity.lootListIndex = (int) (ushort) this.lootList;
-		tileEntity.SetContainerSize(LootContainer.lootList[this.lootList].size);
+		tileEntity.lootListName = this.lootList;
+		tileEntity.SetContainerSize(LootSize, false);
 		_chunk.AddTileEntity((TileEntity) tileEntity);
 
 		base.OnBlockAdded(_world, _chunk, _blockPos, _blockValue);
@@ -182,7 +181,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		EntityAlive _player)
 	{
 		if (!(_world.GetTileEntity(_cIdx, _blockPos) is TileEntityClaimAutoRepair tileEntity)) return false;
-		if (_indexInBlockActivationCommands == 5)
+		if (_indexInBlockActivationCommands == 6)
 		{
 			// Copied from vanilla Block::OnBlockActivated
 			bool flag = this.CanPickup;
@@ -196,20 +195,20 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 			}
 			if (_blockValue.damage > 0)
 			{
-				GameManager.ShowTooltipWithAlert(_player as EntityPlayerLocal, Localization.Get("ttRepairBeforePickup"), "ui_denied");
+				GameManager.ShowTooltip(_player as EntityPlayerLocal, Localization.Get("ttRepairBeforePickup"), "ui_denied");
 				return false;
 			}
 			ItemStack itemStack = Block.list[_blockValue.type].OnBlockPickedUp(_world, _cIdx, _blockPos, _blockValue, _player.entityId);
 			if (!_player.inventory.CanTakeItem(itemStack) && !_player.bag.CanTakeItem(itemStack))
 			{
-				GameManager.ShowTooltipWithAlert(_player as EntityPlayerLocal, Localization.Get("xuiInventoryFullForPickup"), "ui_denied");
+				GameManager.ShowTooltip(_player as EntityPlayerLocal, Localization.Get("xuiInventoryFullForPickup"), "ui_denied");
 				return false;
 			}
 			TakeItemWithTimer(_cIdx, _blockPos, _blockValue, _player);
 			return false;
 
 		}
-		else if (_indexInBlockActivationCommands == 6)
+		else if (_indexInBlockActivationCommands == 7)
 		{
 			tileEntity.IsOn = !tileEntity.IsOn;
 			return true;
@@ -237,7 +236,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 	{
 		if (_blockValue.damage > 0)
 		{
-			GameManager.ShowTooltipWithAlert(_player as EntityPlayerLocal, Localization.Get("ttRepairBeforePickup"), "ui_denied");
+			GameManager.ShowTooltip(_player as EntityPlayerLocal, Localization.Get("ttRepairBeforePickup"), "ui_denied");
 		}
 		else
 		{
@@ -268,18 +267,18 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		EntityPlayerLocal entityPlayerLocal = data[3] as EntityPlayerLocal;
 		if (block.damage > 0)
 		{
-			GameManager.ShowTooltipWithAlert(entityPlayerLocal, Localization.Get("ttRepairBeforePickup"), "ui_denied");
+			GameManager.ShowTooltip(entityPlayerLocal, Localization.Get("ttRepairBeforePickup"), "ui_denied");
 		}
 		else if (block.type != blockValue.type)
 		{
-			GameManager.ShowTooltipWithAlert(entityPlayerLocal, Localization.Get("ttBlockMissingPickup"), "ui_denied");
+			GameManager.ShowTooltip(entityPlayerLocal, Localization.Get("ttBlockMissingPickup"), "ui_denied");
 		}
 		else
 		{
 			TileEntityClaimAutoRepair tileEntity = world.GetTileEntity(_clrIdx, vector3i) as TileEntityClaimAutoRepair;
 			if (tileEntity.IsUserAccessing())
 			{
-				GameManager.ShowTooltipWithAlert(entityPlayerLocal, Localization.Get("ttCantPickupInUse"), "ui_denied");
+				GameManager.ShowTooltip(entityPlayerLocal, Localization.Get("ttCantPickupInUse"), "ui_denied");
 			}
 			else
 			{

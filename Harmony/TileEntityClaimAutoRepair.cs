@@ -1,9 +1,4 @@
-using DMT;
-using Audio;
-using HarmonyLib;
 using UnityEngine;
-using System.Reflection;
-using System.Collections;
 using System.Collections.Generic;
 
 public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
@@ -11,7 +6,11 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 
 	// how much damage repair per tick
 	// Gets multiplied by Time.deltaTime!
-	public const float repairSpeed = 750f;
+	// 750f ~> 2000 hit-points in 1 in-game hour
+	// 750f ~> 10k hit-points in 14m real-time
+	// 750f ~> 48k hit-points in 1 in-game day
+	// 750f ~> each tick fixes ~25 hit-points
+	public const float repairSpeed = 2000f;
 
 	// The acquired block to be repaired
 	public BlockValue repairBlock;
@@ -67,7 +66,6 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 
 	public void ReduceItemCount(Block.SItemNameCount sitem, int count)
 	{
-		int having = 0;
 		for (int i = 0; i < items.Length; i++)
 		{
 			ItemStack stack = items[i];
@@ -169,7 +167,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 
 			// Get block currently at the position we try to repair
 			BlockValue currentValue = world.GetBlock(repairPosition);
-			// Check if any of the stats chaged after we acquired to block
+			// Check if any of the stats changed after we acquired to block
 			if (currentValue.type != repairBlock.type || currentValue.damage != repairBlock.damage)
 			{
 				// Reset the acquired block and play a sound bit
@@ -237,7 +235,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 			// int n = 0; while (++n < 500 && repairBlock.type == BlockValue.Air.type)
 
 			// Simple and crude random block acquiring
-			// Repair block has slightly futher reach
+			// Repair block has slightly further reach
 			for (int i = 1; i <= claimSize + 5; i += 1)
 			{
 
@@ -404,39 +402,47 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 		int claimSize,
 		bool includeAllies)
 	{
-		PersistentPlayerList persistentPlayerList = world.gameManager.GetPersistentPlayerList();
-		List<Vector3i> indexedBlock = chunk.IndexedBlocks["lpblock"];
-		if (indexedBlock != null)
-		{
-			Vector3i worldPos = chunk.GetWorldPos();
-			for (int index = 0; index < indexedBlock.Count; ++index)
+
+		// Vector3i worldPos = chunk.GetWorldPos();
+		// Check if block to be repaired is within a trader area?
+		// if (world.IsWithinTraderArea(worldPos + blockPos)) return false;
+
+		foreach (var player in world.gameManager.GetPersistentPlayerList().Players) {
+
+			PersistentPlayerData playerData = player.Value;
+			// PlatformUserIdentifierAbs playerId = player.Key;
+
+			// First check if user is not myself
+			if (lpRelative != playerData)
 			{
-				Vector3i pos = indexedBlock[index] + worldPos;
-				if (BlockLandClaim.IsPrimary(chunk.GetBlock(indexedBlock[index])))
+				// Check if allies should be considered and if ACL is there
+				if (includeAllies == false || playerData.ACL == null) continue;
+				// Now check the actual ACL if player is allied with ourself
+				if (!playerData.ACL.Contains(lpRelative.UserIdentifier)) continue;
+			}
+
+			// Get all land-claim blocks of the allied user (or our-self)
+			if (player.Value.GetLandProtectionBlocks() is List<Vector3i> claimPositions)
+			{
+				for (int i = 0; i < claimPositions.Count; ++i)
 				{
-					int num1 = Mathf.Abs(pos.x - blockPos.x);
-					int num2 = Mathf.Abs(pos.z - blockPos.z);
-					if (num1 <= claimSize && num2 <= claimSize)
+					// Fetch block value at position where claim block should be
+					BlockValue blockValue = world.GetBlock(claimPositions[i]);
+					// The "primary" flag is encoded in `blockValue.meta`
+					if (BlockLandClaim.IsPrimary(blockValue))
 					{
-						PersistentPlayerData protectionBlockOwner = persistentPlayerList.GetLandProtectionBlockOwner(pos);
-						if (protectionBlockOwner != null)
-						{
-							bool flag = world.IsLandProtectionValidForPlayer(protectionBlockOwner);
-							if (flag && lpRelative != null)
-							{
-								if (lpRelative == protectionBlockOwner) flag = true;
-								else if (includeAllies && protectionBlockOwner.ACL != null &&
-										 protectionBlockOwner.ACL.Contains(lpRelative.PlayerId)) {
-									flag = true;
-								}
-							}
-							if (flag)
-								return true;
-						}
+						// Now check if the block is inside the range
+						if (Mathf.Abs(claimPositions[i].x - blockPos.x) > claimSize) continue;
+						if (Mathf.Abs(claimPositions[i].z - blockPos.z) > claimSize) continue;
+						// Block within my claim
+						return true;
 					}
 				}
 			}
+
 		}
+
+		// Not inside my claim
 		return false;
 	}
 

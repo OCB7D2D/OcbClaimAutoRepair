@@ -1,20 +1,16 @@
-using DMT;
 using HarmonyLib;
 using UnityEngine;
 using System.Reflection;
 
-public class OcbClaimAutoRepair
+public class OcbClaimAutoRepair : IModApi
 {
 
-	// Entry class for Harmony patching
-	public class OcbClaimAutoRepair_Init : IHarmony	
+	// Entry class for A20 patching
+	public void InitMod(Mod mod)
 	{
-		public void Start()
-		{
-			Debug.Log("Loading OCB Claim Auto Repair Patch: " + GetType().ToString());
-			var harmony = new Harmony(GetType().ToString());
-			harmony.PatchAll(Assembly.GetExecutingAssembly());
-		}
+		Debug.Log("Loading OCB Claim Auto Repair Patch: " + GetType().ToString());
+		var harmony = new Harmony(GetType().ToString());
+		harmony.PatchAll(Assembly.GetExecutingAssembly());
 	}
 
 	[HarmonyPatch(typeof(TileEntity))]

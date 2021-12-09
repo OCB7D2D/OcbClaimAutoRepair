@@ -1,4 +1,4 @@
-# OCB Claim Auto Repair Mod - 7 Days to Die (DMT/Harmony) Addon
+# OCB Claim Auto Repair Mod - 7 Days to Die (A20) Addon
 
 A new block that will automatically repair damaged blocks within your claim.
 Introduces a new block that is based on a storage chest. You need to put in
@@ -18,8 +18,69 @@ block that is being repaired is further damaged, the auto repair is aborted.
 You should hear a sound from the box when it is repairing blocks and also if
 a block in repair is further damaged (and repair in progress is aborted).
 
+## How to use
+
+Make sure you have placed a Land-Claim Block, otherwise it will not work!
+
+<img src="Screens/how-to-use.jpg" alt="Block shown in-game" height="680"/>
+
+- Place the block within claimed land
+- Interact with the Block by pressing `E`
+- Open the box inventory and put in repair materials
+- Make sure to enable the auto repair block (hold `E`)
+- Once enabled, you should see a gray outline around the box
+- Wait for it to find a damaged block it can repair (yellow outline)
+
+## Block finding and Repair speed
+
+Given the big range a repair block covers, finding a specific damaged block
+can take quite a bit of time. Consider that when more blocks are damaged, the
+random finding of damaged blocks has a much higher chance. If only one single
+block is damaged, finding that one can take quite a bit of time.
+
+Repair speed has been increased from A19 version, since I agree it was a tad
+bit slow, specially if you have many high hit-point blocks. Although the pace
+is still at a leisurely pace. I don't want this block to be overpowered. It
+should repair a fairly damaged base within 7 hours though and you can always
+build additional repair blocks. They might randomly interfere with each other
+but repair should still work (and be faster).
+
+I've made some measurements and will gladly report my findings, although yours
+may vary for whatever reason (calculations are tick and time delta based).
+Internally the repair speed is currently set to `2000f` (just a factor).
+With that base factor you can expect around the following repair speeds:
+
+- Each tick (sound you hear) it repairs around 65 hit-points
+- This sums up to around 5000 hit-points in one in-game hour
+- Or around 125K hit-points per in-game day or 875k in a week
+- Or 75 fully damaged 10k blocks between horde-nights (6 days)
+
 ## Further improvements
 
+I reduced the storage size to have a bit more UI real-estate to add more
+info and maybe modifier-slots to further increase repair-speed etc.
 It would be nice to have a better indication what the box is actually doing.
-For now I only added some sounds, since that was pretty easy. Also a on and off
-switch would be cool and finally I'm thinking about requiring power to drive it.
+For now I only added some sounds and an outline, since that was pretty easy.
+Another thing would be to require power for the box to work. Ultimately an
+NPC doing something similar would be killer, but needs AI and path-finding.
+
+## How to compile
+
+I've included a MSVC solution file and also a simple batch file to use my
+[A20BepInEx Utils][1], although BepInEx is NOT needed for this mod, it still
+make compilation a piece of cake if all env-variables are properly configured.
+The MSVC solution files require one environment variable `PATH_7D2D_MANAGED`
+to be set. This is needed in order to find the correct game dlls for the
+compilation. Note that the resulting dlls will be put under
+`build/bin/target/AutoClaimRepair.dll`. You need to move them
+over to the folder root in order for 7D2D to pick it up.
+
+## Changelog
+
+### Version 0.7.0
+
+- Refactored for A20 compatibility (native mod now)
+- Reduced storage size for UI space (e.g. modified slots)
+- Increased base repair speed from 750 to 2000
+
+[1]: https://github.com/OCB7D2D/A20BepInExPreloader
