@@ -10,7 +10,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 	// 750f ~> 10k hit-points in 14m real-time
 	// 750f ~> 48k hit-points in 1 in-game day
 	// 750f ~> each tick fixes ~25 hit-points
-	public const float repairSpeed = 2000f;
+	public float repairSpeed = 2000f;
 
 	// The acquired block to be repaired
 	public BlockValue repairBlock;

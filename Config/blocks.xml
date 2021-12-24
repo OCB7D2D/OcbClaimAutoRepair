@@ -36,6 +36,7 @@
 			<property name="CanPickup" value="true" />
 			<property name="TakeDelay" value="30"/>
 
+			<property name="ClaimAutoRepairSpeedFactor" value="2000"/>
 		</block>
 	</append>
 

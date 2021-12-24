@@ -20,7 +20,7 @@ public class OcbClaimAutoRepair : IModApi
 		public static bool Prefix(TileEntityType type, Chunk _chunk, ref TileEntity __result)
 		{
 			if (type == (TileEntityType)242) {
-				__result = (TileEntity) new TileEntityClaimAutoRepair(_chunk);
+				__result = new TileEntityClaimAutoRepair(_chunk);
 				return false;
 			}
 			return true;

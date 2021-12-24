@@ -8,6 +8,8 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 
 	private float BoundHelperSize = 2.59f;
 
+	private float RepairSpeed = 2000f;
+
 	private float TakeDelay = 30f;
 
 	// Copied from vanilla BlockLandClaim code
@@ -24,8 +26,10 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 	public override void Init()
 	{
 		base.Init();
-		this.TakeDelay = !this.Properties.Values.ContainsKey("TakeDelay") ? 2f
-			: StringParsers.ParseFloat(this.Properties.Values["TakeDelay"]);
+		TakeDelay = !Properties.Values.ContainsKey("TakeDelay") ? TakeDelay
+			: StringParsers.ParseFloat(Properties.Values["TakeDelay"]);
+		RepairSpeed = !Properties.Values.ContainsKey("ClaimAutoRepairSpeedFactor") ? RepairSpeed
+			: StringParsers.ParseFloat(Properties.Values["ClaimAutoRepairSpeedFactor"]);
 	}
 
 	// Copied from vanilla BlockLandClaim code
@@ -71,13 +75,19 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		BlockEntityData _ebcd)
 	{
 		if (_ebcd == null) return;
-		if (!(_world.GetTileEntity(_cIdx, _blockPos) is TileEntityClaimAutoRepair)) {
+		if (_world.GetTileEntity(_cIdx, _blockPos) is TileEntityClaimAutoRepair te) {
+			te.repairSpeed = RepairSpeed;
+		}
+		else {
 			Chunk chunkFromWorldPos = (Chunk) _world.GetChunkFromWorldPos(_blockPos);
-			TileEntityClaimAutoRepair tileEntity = new TileEntityClaimAutoRepair(chunkFromWorldPos);
-			tileEntity.localChunkPos = World.toBlock(_blockPos);
-			tileEntity.lootListName = this.lootList;
-			tileEntity.SetContainerSize(LootSize, false);
-			chunkFromWorldPos.AddTileEntity((TileEntity) tileEntity);
+			te = new TileEntityClaimAutoRepair(chunkFromWorldPos)
+			{
+				localChunkPos = World.toBlock(_blockPos),
+				lootListName = lootList
+			};
+			te.repairSpeed = RepairSpeed;
+			te.SetContainerSize(LootSize, false);
+			chunkFromWorldPos.AddTileEntity(te);
 		}
 
 		base.OnBlockEntityTransformAfterActivated(_world, _blockPos, _cIdx, _blockValue, _ebcd);
@@ -94,11 +104,14 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 			return;
 
 		// Overload TileEntity creation (base method should still recognize this)
-		TileEntityClaimAutoRepair tileEntity = new TileEntityClaimAutoRepair(_chunk);
-		tileEntity.localChunkPos = World.toBlock(_blockPos);
-		tileEntity.lootListName = this.lootList;
+		TileEntityClaimAutoRepair tileEntity = new TileEntityClaimAutoRepair(_chunk)
+		{
+			localChunkPos = World.toBlock(_blockPos),
+			lootListName = lootList
+		};
+		tileEntity.repairSpeed = RepairSpeed;
 		tileEntity.SetContainerSize(LootSize, false);
-		_chunk.AddTileEntity((TileEntity) tileEntity);
+		_chunk.AddTileEntity(tileEntity);
 
 		base.OnBlockAdded(_world, _chunk, _blockPos, _blockValue);
 		if (GameManager.IsDedicatedServer) return;
