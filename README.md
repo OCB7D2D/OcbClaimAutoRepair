@@ -18,6 +18,8 @@ block that is being repaired is further damaged, the auto repair is aborted.
 You should hear a sound from the box when it is repairing blocks and also if
 a block in repair is further damaged (and repair in progress is aborted).
 
+[![GitHub CI Compile Status][4]][3]
+
 ## How to use
 
 Make sure you have placed a Land-Claim Block, otherwise it will not work!
@@ -64,6 +66,12 @@ For now I only added some sounds and an outline, since that was pretty easy.
 Another thing would be to require power for the box to work. Ultimately an
 NPC doing something similar would be killer, but needs AI and path-finding.
 
+### Download and Install
+
+Simply [download here from GitHub][2] and put into your A20 Mods folder:
+
+- https://github.com/OCB7D2D/ClaimAutoRepair/archive/master.zip (master branch)
+
 ## How to compile
 
 I've included a MSVC solution file and also a simple batch file to use my
@@ -81,6 +89,12 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 
 ## Changelog
 
+### Version 0.7.2
+
+- Add Chinese translations (thx fatmanlegend)
+- Automated deployment and release packaging
+
+
 ### Version 0.7.1
 
 - Expose repair speed factor to block xml config  
@@ -93,3 +107,6 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 - Increased base repair speed from 750 to 2000
 
 [1]: https://github.com/OCB7D2D/A20BepInExPreloader
+[2]: https://github.com/OCB7D2D/ClaimAutoRepair/releases
+[3]: https://github.com/OCB7D2D/ClaimAutoRepair/actions/workflows/ci.yml
+[4]: https://github.com/OCB7D2D/ClaimAutoRepair/actions/workflows/ci.yml/badge.svg

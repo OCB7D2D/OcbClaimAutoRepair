@@ -1,0 +1,29 @@
+name: OcbClaimAutoRepair
+
+on:
+  create:
+    tags:
+      - "[0-9]+.[0-9]+.[0-9]+"
+  push:
+    branches:
+      - master
+      - develop
+      - main
+
+jobs:
+
+  compile:
+    runs-on: windows-latest
+    name: Windows MSVC build
+
+    steps:
+    - name: Check out repository code
+      uses: actions/checkout@v2
+    - name: Call OCB7D2D compiler action
+      uses: OCB7D2D/A20BepInExPreloader@master
+      with:
+        name: "OcbClaimAutoRepair"
+        version: "${{ github.ref_name }}"
+        token: "${{ secrets.GITHUB_TOKEN }}"
+        OCBTOKEN: "${{ secrets.OCBTOKEN }}"
+        release: ${{ github.event_name == 'create' && github.event.ref_type == 'tag' }}
