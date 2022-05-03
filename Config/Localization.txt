@@ -1,5 +1,5 @@
-Key,File,Type,UsedInMainMenu,NoTranslate,english,Context / Alternate Text,german,latam,french,italian,japanese,koreana,polish,brazilian,russian,turkish,schinese,tchinese,spanish
-ocbBlockClaimAutoRepair,UI,Menu,,,Claim Auto Repair
-ocbBlockClaimAutoRepairDesc,UI,Menu,,,Automatically repairs blocks in its perimeter, within owner or allied claim, if the necessary materials are available in the container.
-blockcommand_turn_claimautorep_off,UI,Menu,,,Turn Off
-blockcommand_turn_claimautorep_on,UI,Menu,,,Turn On
+﻿Key,File,Type,english,schinese
+ocbBlockClaimAutoRepair,UI,Menu,Claim Auto Repair,领地自动维修器
+ocbBlockClaimAutoRepairDesc,UI,Menu,"Automatically repairs blocks in its perimeter, within owner or allied claim, if the necessary materials are available in the container.","只要容器内储存有必须的材料，就可以周期性地自动维修其拥有者与之盟友领地内的物块。"
+blockcommand_turn_claimautorep_off,UI,Menu,Turn Off,启动
+blockcommand_turn_claimautorep_on,UI,Menu,Turn On,关闭
