@@ -89,6 +89,13 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 
 ## Changelog
 
+### Version 0.7.3
+
+- Shows red outline if land claim is found missing
+- Shows orange outline if repair materials missing
+- Progresses outline from yellow to green on repair
+- Chats you about last missing material when opened
+
 ### Version 0.7.2
 
 - Add Chinese translations (thx fatmanlegend)

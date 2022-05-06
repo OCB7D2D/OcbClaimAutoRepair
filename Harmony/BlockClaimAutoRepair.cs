@@ -49,7 +49,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 				boundsHelper.localScale = new Vector3(BoundHelperSize, BoundHelperSize, BoundHelperSize);
 				boundsHelper.localPosition = new Vector3(_blockPos.x + 0.5f, _blockPos.y + 0.5f, _blockPos.z + 0.5f);
 				tileEntityLandAutoRepair.BoundsHelper = boundsHelper;
-				tileEntityLandAutoRepair.ResetBoundHelper();
+				tileEntityLandAutoRepair.ResetBoundHelper(Color.gray);
 			}
 		}
 	}
@@ -123,7 +123,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 				boundsHelper.localScale = new Vector3(BoundHelperSize, BoundHelperSize, BoundHelperSize);
 				boundsHelper.localPosition = new Vector3(_blockPos.x + 0.5f, _blockPos.y + 0.5f, _blockPos.z + 0.5f);
 				tileEntityLandAutoRepair.BoundsHelper = boundsHelper;
-				tileEntityLandAutoRepair.ResetBoundHelper();
+				tileEntityLandAutoRepair.ResetBoundHelper(Color.gray);
 			}
 		}
 	}
