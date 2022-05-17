@@ -1,0 +1,32 @@
+<configs>
+
+	<append xpath="/blocks/block[@name='ocbBlockClaimAutoRepair']">
+
+		<property name="UnlockedBy" value="ocbBlockClaimAutoRepairBlueprint"/>
+
+		<property name="CarryWeight" value="2"/>
+		<property name="Stacknumber" value="5"/>
+
+		<property class="RepairItems">
+			<property name="resourceForgedSteel" value="40"/>
+			<property name="resourceElectricParts" value="40"/>
+			<property name="resourceMechanicalParts" value="10"/>
+		</property>
+
+		<drop event="Harvest" name="air" count="0" tool_category="Disassemble"/>
+
+		<drop event="Harvest" name="ulmResourceScrapSteel" count="30,60" tag="allHarvest"/>
+		<drop event="Harvest" name="ulmResourceScrapSteel" count="30,60" tag="salvageHarvest"/>
+
+		<drop event="Destroy" name="resourceElectricParts" count="5,20" tag="salvageHarvest"/>
+		<drop event="Destroy" name="resourceMechanicalParts" count="5,10" tag="salvageHarvest"/>
+
+		<drop event="Harvest" name="ulmResourceElectronicFuse" prop="0.3" tag="salvageHarvest"/>
+		<drop event="Harvest" name="ulmResourceElectronicSwitch" prop="0.3" tag="salvageHarvest"/>
+		<drop event="Harvest" name="ulmResourceElectronicCircuitboard" prop="0.2" tag="salvageHarvest"/>
+
+		<drop event="Fall" name="scrapMetalPile" count="1" prob="0.75" stick_chance="1"/>
+
+	</append>
+
+</configs>

@@ -1,0 +1,33 @@
+<configs>
+	<append xpath="/recipes">
+
+		<recipe name="ocbBlockClaimAutoRepairBlueprint" time="90"
+				area="ulmStationResearch_2">
+			<ingredient name="resourceForgedSteel" count="40"/>
+			<ingredient name="resourceMechanicalParts" count="40"/>
+			<ingredient name="resourceElectricParts" count="20"/>
+			<ingredient name="ulmResourceScrapWires" count="12"/>
+			<ingredient name="gunBotRoboticsParts" count="2"/>
+			<ingredient name="ulmResourceElectronicCircuitboard" count="2"/>
+			<ingredient name="ulmResourceElectronicFuse" count="2"/>
+			<ingredient name="ulmResourceElectronicSwitch" count="1"/>
+			<ingredient name="ulmResourceResearch" count="300"/>
+			<ingredient name="resourcePaper" count="10"/>
+		</recipe>
+
+		<recipe name="ocbBlockClaimAutoRepair" time="600"
+				tags="learnable" area="ulmStationWorkbench_3">
+			<ingredient name="resourceForgedSteel" count="40"/>
+			<ingredient name="resourceMechanicalParts" count="40"/>
+			<ingredient name="resourceElectricParts" count="20"/>
+			<ingredient name="ulmResourceScrapWires" count="12"/>
+			<ingredient name="gunBotRoboticsParts" count="6"/>
+			<ingredient name="ulmResourceElectronicCircuitboard" count="2"/>
+			<ingredient name="ulmResourceElectronicFuse" count="2"/>
+			<ingredient name="ulmResourceElectronicSwitch" count="1"/>
+			<ingredient name="carBattery" count="1"/>
+			<ingredient name="solarCell" count="1"/>		
+		</recipe>
+
+	</append>
+</configs>

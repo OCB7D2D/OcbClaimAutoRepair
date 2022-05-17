@@ -77,6 +77,23 @@
     <Compile Include="Harmony\OcbClaimAutoRepair.cs" />
     <Compile Include="Harmony\TileEntityClaimAutoRepair.cs" />
     <Compile Include="Harmony\AssemblyInfo.cs" />
+    <Compile Include="Library\ModXmlPatcher.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Config\blocks.a20.xml" />
+    <Content Include="Config\blocks.ulm.xml" />
+    <Content Include="Config\blocks.xml" />
+    <Content Include="Config\items.xml" />
+    <Content Include="Config\Localization.txt" />
+    <Content Include="Config\loot.xml" />
+    <Content Include="Config\progression.xml" />
+    <Content Include="Config\recipes.a20.xml" />
+    <Content Include="Config\recipes.ulm.xml" />
+    <Content Include="Config\recipes.xml" />
+    <Content Include="ModInfo.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

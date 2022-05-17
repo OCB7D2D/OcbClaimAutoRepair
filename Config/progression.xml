@@ -1,3 +1,10 @@
-<configs>
-	<append xpath="/progression/perks/perk[@name='perkAdvancedEngineering']/effect_group/passive_effect[@name='RecipeTagUnlocked' and @value='1' and @level='2,5']/@tags">,ocbBlockClaimAutoRepair</append>
+<configs patcher-version="1">
+
+	<modif condition="UndeadLegacy_CoreModule">
+		<!-- unlocks items via schematics only -->
+	</modif>
+	<modelse>
+		<append xpath="/progression/perks/perk[@name='perkAdvancedEngineering']/effect_group/passive_effect[@name='RecipeTagUnlocked' and @value='1' and @level='2,5']/@tags">,ocbBlockClaimAutoRepair</append>
+	</modelse>
+
 </configs>

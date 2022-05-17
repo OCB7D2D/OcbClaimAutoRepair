@@ -161,6 +161,9 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 
 	static Color orange = new Color(1f, 0.6f, 0f);
 
+	bool hadDamagedBlock = false;
+	bool hadBlockOutside = false;
+
 	public void TickRepair(World world)
 	{
 
@@ -214,6 +217,8 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 					// BroadCast the changes done to the block
 					world.SetBlockRPC(chunkFromWorldPos.ClrIdx, repairPosition,
 						repairBlock, repairBlock.Block.Density);
+					// Update the bound helper (maybe debounce a little?)
+					EnableBoundHelper(repairDamage / repairBlock.damage);
 					// Get material to play material specific sound
 					var material = repairBlock.Block.blockMaterial.SurfaceCategory;
 					world.GetGameManager().PlaySoundAtPositionServer(
@@ -238,9 +243,6 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 		else
 		{
 
-			bool hadDamagedBlock = false;
-			bool hadBlockOutside = false;
-
 			// Get size of land claim blocks to look for valid blocks to repair
 			int claimSize = (GameStats.GetInt(EnumGameStats.LandClaimSize) - 1) / 2;
 
@@ -250,57 +252,68 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 			PersistentPlayerData playerData = persistentPlayerList.GetPlayerData(this.GetOwner());
 
 			// Speed up finding of blocks (for easier debugging purpose only!)
-			int n = 0; while (++n < 500 && repairBlock.type == BlockValue.Air.type)
+			// int n = 0; while (++n < 500 && repairBlock.type == BlockValue.Air.type)
 
-				// Simple and crude random block acquiring
-				// Repair block has slightly further reach
-				for (int i = 1; i <= claimSize + 5; i += 1)
+			// Simple and crude random block acquiring
+			// Repair block has slightly further reach
+			for (int i = 1; i <= claimSize + 5; i += 1)
+			{
+
+				// Get a random block and see if it need repair
+				Vector3i randomPos = GetRandomPos(world, worldPos, i);
+				BlockValue blockValue = world.GetBlock(randomPos);
+
+				damagePerc = (float)(blockValue.damage) / (float)(Block.list[blockValue.type].MaxDamage);
+
+				// Check if block needs repair and if we have the needed materials
+				if (blockValue.damage > 0)
 				{
-
-					// Get a random block and see if it need repair
-					Vector3i randomPos = GetRandomPos(world, worldPos, i);
-					BlockValue blockValue = world.GetBlock(randomPos);
-
-					damagePerc = (float)(blockValue.damage) / (float)(Block.list[blockValue.type].MaxDamage);
-
-					// Check if block needs repair and if we have the needed materials
-					if (blockValue.damage > 0)
+					if (CanRepairBlock(blockValue.Block))
 					{
-						if (CanRepairBlock(blockValue.Block))
+						// int deadZone = GameStats.GetInt(EnumGameStats.LandClaimDeadZone) + claimSize;
+						Chunk chunkFromWorldPos = (Chunk)world.GetChunkFromWorldPos(worldPosI);
+						if (!IsBlockInsideClaim(world, chunkFromWorldPos, randomPos, playerData, claimSize, true))
 						{
-							// int deadZone = GameStats.GetInt(EnumGameStats.LandClaimDeadZone) + claimSize;
-							Chunk chunkFromWorldPos = (Chunk)world.GetChunkFromWorldPos(worldPosI);
-							if (!IsBlockInsideClaim(world, chunkFromWorldPos, randomPos, playerData, claimSize, true))
-							{
-								// Check if the block is close by (missing land claim?)
-								if (randomPos.x < claimSize / 2) hadBlockOutside = true;
-								else if (randomPos.y < claimSize / 2) hadBlockOutside = true;
-								else if (randomPos.z < claimSize / 2) hadBlockOutside = true;
-								// Skip it
-								continue;
-							}
-							// Play simple click indicating we are working on something
-							world.GetGameManager().PlaySoundAtPositionServer(worldPos,
-								"timer_stop", AudioRolloffMode.Logarithmic, 100);
-							// Acquire the block to repair
-							repairPosition = randomPos;
-							repairBlock = blockValue;
-							repairDamage = 0.0f;
-							hadDamagedBlock = false;
-							hadBlockOutside = false;
-							EnableBoundHelper(0);
-							SetModified();
+							// Check if the block is close by (missing land claim?)
+							if (randomPos.x < claimSize / 2) hadBlockOutside = true;
+							else if (randomPos.y < claimSize / 2) hadBlockOutside = true;
+							else if (randomPos.z < claimSize / 2) hadBlockOutside = true;
+							// Skip it
+							continue;
 						}
-						else if (blockValue.Block?.RepairItems?.Count > 0)
-						{
-							hadDamagedBlock = true;
-						}
+						// Play simple click indicating we are working on something
+						world.GetGameManager().PlaySoundAtPositionServer(worldPos,
+							"timer_stop", AudioRolloffMode.Logarithmic, 100);
+						// Acquire the block to repair
+						repairPosition = randomPos;
+						repairBlock = blockValue;
+						repairDamage = 0.0f;
+						hadDamagedBlock = false;
+						hadBlockOutside = false;
+						EnableBoundHelper(0);
+						SetModified();
+						return;
+					}
+					else if (blockValue.Block?.RepairItems?.Count > 0)
+					{
+						hadDamagedBlock = true;
 					}
 				}
+			}
 
-			if (hadBlockOutside) ResetBoundHelper(Color.red);
-			else if (hadDamagedBlock) ResetBoundHelper(orange);
-			else ResetBoundHelper(Color.gray);
+			if (hadBlockOutside)
+			{
+				lastMissingItem = "keystoneBlock";
+				ResetBoundHelper(Color.red);
+			}
+			else if (hadDamagedBlock)
+			{
+				ResetBoundHelper(orange);
+			}
+			else if (repairPosition == worldPos)
+			{
+				ResetBoundHelper(Color.gray);
+			}
 
 		}
 	}
@@ -407,9 +420,10 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 		if (IsUserAccessing() != _bUserAccessing)
 		{
 			base.SetUserAccessing(_bUserAccessing);
+			hadDamagedBlock = false;
+			hadBlockOutside = false;
 			if (_bUserAccessing)
 			{
-				Log.Out("User is Accessing {0}", lastMissingItem);
 				if (lastMissingItem != null)
 				{
 					var player = GameManager.Instance?.World?.GetPrimaryPlayer();

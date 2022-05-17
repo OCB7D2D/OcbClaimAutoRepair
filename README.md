@@ -33,6 +33,13 @@ Make sure you have placed a Land-Claim Block, otherwise it will not work!
 - Once enabled, you should see a gray outline around the box
 - Wait for it to find a damaged block it can repair (yellow outline)
 
+## Undead Legacy Support
+
+This mod is compatibly with Undead Legacy out of the box, e.g. no further
+compatibility patches are needed. But you will need to make sure that this
+mod loads after the regular undead legacy mods. You can e.g. accomplish
+this simply by *renaming the folder* to `ZClaimAutoRepair`.
+
 ## Block finding and Repair speed
 
 Given the big range a repair block covers, finding a specific damaged block
@@ -88,6 +95,13 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 ```
 
 ## Changelog
+
+### Version 0.7.4
+
+- Fix issue with outline not moving fast enough
+- Fix high CPU usage (left dev mode on in 0.7.3)
+- Add compatibility (recipes etc.) for Undead Legacy
+- Also chat about missing land claim block
 
 ### Version 0.7.3
 

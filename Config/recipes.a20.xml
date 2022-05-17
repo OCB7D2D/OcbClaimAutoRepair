@@ -1,0 +1,16 @@
+<configs>
+	<append xpath="/recipes">
+
+		<recipe name="ocbBlockClaimAutoRepair" count="1"
+				tags="perkAdvancedEngineering,learnable"
+				craft_area="workbench" material_based="false"
+				craft_time="600">
+			<ingredient name="resourceForgedSteel" count="40"/>
+			<ingredient name="resourceMechanicalParts" count="40"/>
+			<ingredient name="resourceElectricParts" count="20"/>
+			<ingredient name="gunBotRoboticsParts" count="6"/>
+			<ingredient name="carBattery" count="6"/>
+		</recipe>
+
+	</append>
+</configs>

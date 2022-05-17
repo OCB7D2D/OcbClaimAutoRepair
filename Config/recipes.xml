@@ -1,16 +1,10 @@
-<configs>
-	<append xpath="/recipes">
+<configs patcher-version="1">
 
-		<recipe name="ocbBlockClaimAutoRepair" count="1"
-				tags="perkAdvancedEngineering,learnable"
-				craft_area="workbench" material_based="false"
-				craft_time="600">
-			<ingredient name="resourceForgedSteel" count="40"/>
-			<ingredient name="resourceMechanicalParts" count="40"/>
-			<ingredient name="resourceElectricParts" count="20"/>
-			<ingredient name="gunBotRoboticsParts" count="6"/>
-			<ingredient name="carBattery" count="6"/>
-		</recipe>
+	<modif condition="UndeadLegacy_CoreModule">
+		<include path="recipes.ulm.xml"/>
+	</modif>
+	<modelse>
+		<include path="recipes.a20.xml"/>
+	</modelse>
 
-	</append>
 </configs>

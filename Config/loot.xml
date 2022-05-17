@@ -1,0 +1,16 @@
+﻿<configs patcher-version="1">
+
+	<modif condition="UndeadLegacy_CoreModule">
+
+		<append xpath="/lootcontainers/lootgroup[@name='booksElectrical']">
+			<item name="ocbBlockClaimAutoRepairBlueprint" loot_prob_template="medLow"/>
+		</append>
+		<append xpath="/lootcontainers/lootgroup[@name='booksToolsT2']">
+			<item name="ocbBlockClaimAutoRepairBlueprint" loot_prob_template="low"/>
+		</append>
+		
+	</modif>
+	<modelse>
+	</modelse>
+
+</configs>

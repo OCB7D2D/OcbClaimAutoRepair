@@ -1,0 +1,22 @@
+﻿<configs patcher-version="1">
+
+	<modif condition="UndeadLegacy_CoreModule">
+
+		<append xpath="/items">
+
+			<item name="ocbBlockClaimAutoRepairBlueprint">
+				<property name="Extends" value="schematicNoQualityMaster"/>
+				<property name="CustomIcon" value="ClaimAutoRepair"/>
+				<property name="Group" value="Schematics,BPScience,Books,Items"/>
+				<property name="Unlocks" value="ocbBlockClaimAutoRepair"/>
+				<effect_group tiered="false">
+					<triggered_effect trigger="onSelfPrimaryActionEnd" action="ModifyCVar" cvar="ocbBlockClaimAutoRepair" operation="set" value="1"/>
+					<triggered_effect trigger="onSelfPrimaryActionEnd" action="GiveExp" exp="50"/>
+				</effect_group>
+			</item>
+
+		</append>
+
+	</modif>
+
+</configs>
