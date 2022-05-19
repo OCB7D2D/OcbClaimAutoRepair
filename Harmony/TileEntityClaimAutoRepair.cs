@@ -33,6 +33,10 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 	// Copied from LandClaim code
 	public Transform BoundsHelper;
 
+	// Some basic stats from searches
+	bool hadDamagedBlock = false;
+	bool hadBlockOutside = false;
+
 	private bool isOn;
 
 	public bool IsOn
@@ -161,10 +165,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 
 	static Color orange = new Color(1f, 0.6f, 0f);
 
-	bool hadDamagedBlock = false;
-	bool hadBlockOutside = false;
-
-	public void TickRepair(World world)
+    public void TickRepair(World world)
 	{
 
 		Vector3i worldPosI = ToWorldPos();
@@ -305,14 +306,17 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 			{
 				lastMissingItem = "keystoneBlock";
 				ResetBoundHelper(Color.red);
+				SetModified();
 			}
 			else if (hadDamagedBlock)
 			{
 				ResetBoundHelper(orange);
+				SetModified();
 			}
 			else if (repairPosition == worldPos)
 			{
 				ResetBoundHelper(Color.gray);
+				SetModified();
 			}
 
 		}
@@ -331,10 +335,22 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 				this.repairPosition.x = _br.ReadInt32();
 				this.repairPosition.y = _br.ReadInt32();
 				this.repairPosition.z = _br.ReadInt32();
+				this.hadDamagedBlock = _br.ReadBoolean();
+				this.hadBlockOutside = _br.ReadBoolean();
+				this.lastMissingItem = _br.ReadBoolean()
+					? _br.ReadString() : null;
 				float progress = _br.ReadSingle();
 				if (isOn && isRepairing)
 				{
 					EnableBoundHelper(progress);
+				}
+				else if (hadBlockOutside)
+				{
+					ResetBoundHelper(Color.red);
+				}
+				else if (hadDamagedBlock)
+				{
+					ResetBoundHelper(orange);
 				}
 				else
 				{
@@ -369,6 +385,11 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 				_bw.Write(this.repairPosition.x);
 				_bw.Write(this.repairPosition.y);
 				_bw.Write(this.repairPosition.z);
+				_bw.Write(this.hadDamagedBlock);
+				_bw.Write(this.hadBlockOutside);
+				_bw.Write(this.lastMissingItem != null);
+				if (this.lastMissingItem != null)
+					_bw.Write(this.lastMissingItem);
 				_bw.Write(repairDamage / repairBlock.damage);
 				break;
 		}
