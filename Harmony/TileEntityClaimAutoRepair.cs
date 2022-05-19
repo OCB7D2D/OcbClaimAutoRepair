@@ -274,10 +274,10 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 						Chunk chunkFromWorldPos = (Chunk)world.GetChunkFromWorldPos(worldPosI);
 						if (!IsBlockInsideClaim(world, chunkFromWorldPos, randomPos, playerData, claimSize, true))
 						{
-							// Check if the block is close by (missing land claim?)
-							if (randomPos.x < claimSize / 2) hadBlockOutside = true;
-							else if (randomPos.y < claimSize / 2) hadBlockOutside = true;
-							else if (randomPos.z < claimSize / 2) hadBlockOutside = true;
+							// Check if the block is close by, which suggests a missing land claim block?
+							if (Mathf.Abs(randomPos.x - worldPos.x) < claimSize / 2) hadBlockOutside = true;
+							else if (Mathf.Abs(randomPos.y - worldPos.y) < claimSize / 2) hadBlockOutside = true;
+							else if (Mathf.Abs(randomPos.z - worldPos.z) < claimSize / 2) hadBlockOutside = true;
 							// Skip it
 							continue;
 						}
