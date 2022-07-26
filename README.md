@@ -96,6 +96,10 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 
 ## Changelog
 
+### Version 0.7.6
+
+- Add automated translations for 27 languages via DeepL
+
 ### Version 0.7.5
 
 - Fix issue not reporting missing land claim
