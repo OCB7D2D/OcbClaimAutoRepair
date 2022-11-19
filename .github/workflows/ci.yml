@@ -20,7 +20,7 @@ jobs:
     - name: Check out repository code
       uses: actions/checkout@v2
     - name: Call OCB7D2D compiler action
-      uses: OCB7D2D/A20BepInExPreloader@master
+      uses: OCB7D2D/A20BepInExPreloader@develop
       with:
         name: "OcbClaimAutoRepair"
         version: "${{ github.ref_name }}"
