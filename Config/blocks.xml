@@ -1,4 +1,4 @@
-<configs patcher-version="1">
+<configs patcher-version="4">
 
 	<append xpath="/blocks">
 		<block name="ocbBlockClaimAutoRepair">
@@ -34,7 +34,7 @@
 		<include path="blocks.ulm.xml"/>
 	</modif>
 	<modelse>
-		<include path="blocks.a20.xml"/>
+		<include path="blocks.a21.xml"/>
 	</modelse>
 
 </configs>

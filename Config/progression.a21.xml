@@ -1,0 +1,11 @@
+<configs>
+
+  <insertafter xpath="/progression/crafting_skills/crafting_skill[@name='craftingRepairTools']/display_entry[@item='meleeToolRepairT3Nailgun']">
+    <display_entry item="ocbBlockClaimAutoRepair" has_quality="false" unlock_level="35" />
+  </insertafter>
+
+  <append xpath="/progression/crafting_skills/crafting_skill[@name='craftingRepairTools']/effect_group">
+    <passive_effect name="RecipeTagUnlocked" operation="base_set" level="35,50" value="1" tags="ocbBlockClaimAutoRepair"/>
+  </append>
+
+</configs>

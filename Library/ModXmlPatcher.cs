@@ -26,9 +26,12 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using System.Xml.Linq;
+using System.Xml.XPath;
 
 static class ModXmlPatcher
 {
@@ -59,40 +62,92 @@ static class ModXmlPatcher
 
     // Evaluate a comma separated list of conditions
     // The results are logically `and'ed` together
-    private static bool EvaluateConditions(string conditions)
+    private static bool EvaluateConditions(string conditions, XmlFile xml)
     {
         // Ignore if condition is empty or null
         if (string.IsNullOrEmpty(conditions)) return false;
         // Split comma separated list (no whitespace allowed yet)
-        foreach (string condition in conditions.Split(','))
+
+        if (conditions.StartsWith("xpath:"))
         {
-            // Check if condition is negated
-            if (condition[0] == '!')
+            conditions = conditions.Substring(6);
+            foreach (string xpath in conditions.Split(','))
             {
-                // If condition returns true, and group is false
-                if (EvaluateCondition(condition.Substring(1)))
+                bool negate = false;
+                List<System.Xml.Linq.XElement> xmlNodeList;
+                if (xpath.StartsWith("!"))
                 {
-                    return false;
+                    negate = true;
+                    xmlNodeList = xml.XmlDoc.XPathSelectElements(
+                        xpath.Substring(1)).ToList();
                 }
-            }
-            // Group is false if one condition is false
-            else if (!EvaluateCondition(condition))
-            {
-                return false;
+                else
+                {
+                    xmlNodeList = xml.XmlDoc.XPathSelectElements(xpath).ToList();
+                }
+                bool result = true;
+                if (xmlNodeList == null) result = false;
+                if (xmlNodeList.Count == 0) result = false;
+                if (negate) result = !result;
+                if (!result) return false;
             }
         }
+        else
+        {
+            foreach (string condition in conditions.Split(','))
+            {
+                bool result = true;
+                // Try to find version comparator
+                int notpos = condition[0] == '!' ? 1 : 0;
+                int ltpos = condition.IndexOf("<");
+                int gtpos = condition.IndexOf(">");
+                int lepos = condition.IndexOf("≤");
+                int gepos = condition.IndexOf("≥");
+                int length = condition.Length - notpos;
+                if (ltpos != -1) length = ltpos - notpos;
+                else if (gtpos != -1) length = gtpos - notpos;
+                else if (lepos != -1) length = lepos - notpos;
+                else if (gepos != -1) length = gepos - notpos;
+                string name = condition.Substring(notpos, length);
+                if (length != condition.Length - notpos)
+                {
+                    if (ModManager.GetMod(name) is Mod mod)
+                    {
+                        string version = condition.Substring(notpos + length + 1);
+                        Version having = mod.Version;
+                        Version testing = Version.Parse(version);
+                        if (ltpos != -1) result = having < testing;
+                        if (gtpos != -1) result = having > testing;
+                        if (lepos != -1) result = having <= testing;
+                        if (gepos != -1) result = having >= testing;
+                    }
+                    else
+                    {
+                        result = false;
+                    }
+                }
+                else if (!EvaluateCondition(name))
+                {
+                    result = false;
+                }
+
+                if (notpos == 1) result = !result;
+                if (result == false) return false;
+            }
+        }
+
         // Something was true
         return true;
     }
 
     // We need to call into the private function to proceed with XML patching
-    private static MethodInfo MethodSinglePatch = AccessTools.Method(typeof(XmlPatcher), "singlePatch");
+    private static readonly MethodInfo MethodSinglePatch = AccessTools.Method(typeof(XmlPatcher), "singlePatch");
 
     // Function to load another XML file and basically call the same PatchXML function again
-    private static bool IncludeAnotherDocument(XmlFile target, XmlFile parent, XmlElement element, string modName)
+    private static bool IncludeAnotherDocument(XmlFile target, XmlFile parent, XElement element, string modName)
     {
         bool result = true;
-        foreach (XmlAttribute attr in element.Attributes)
+        foreach (XAttribute attr in element.Attributes())
         {
             // Skip unknown attributes
             if (attr.Name != "path") continue;
@@ -103,8 +158,8 @@ static class ModXmlPatcher
             {
                 try
                 {
-                    string _text = File.ReadAllText(path, Encoding.UTF8);
-                    // .Replace("@modfolder:", "@modfolder(" + loadedMod.ModInfo.Name?.ToString() + "):");
+                    string _text = File.ReadAllText(path, Encoding.UTF8)
+                        .Replace("@modfolder:", "@modfolder(" + modName + "):");
                     XmlFile _patchXml;
                     try
                     {
@@ -140,26 +195,43 @@ static class ModXmlPatcher
 
     // Basically the same function as `XmlPatcher.PatchXml`
     // Patched to support `include` and `modif` XML elements
-    public static bool PatchXml(XmlFile xmlFile, XmlFile patchXml, XmlElement node, string patchName)
+
+    static int count = 0;
+
+    public static bool PatchXml(XmlFile xmlFile, XmlFile patchXml, XElement node, string patchName)
     {
         bool result = true;
-        foreach (XmlNode child in node.ChildNodes)
+        count++;
+        ParserStack stack = new ParserStack();
+        stack.count = count;
+        foreach (XElement child in node.Elements())
         {
             if (child.NodeType == XmlNodeType.Element)
             {
-                if (!(child is XmlElement element)) continue;
+                if (!(child is XElement element)) continue;
                 // Patched to support includes
                 if (child.Name == "include")
                 {
                     // Will do the magic by calling our functions again
                     IncludeAnotherDocument(xmlFile, patchXml, element, patchName);
                 }
+                else if (child.Name == "echo")
+                {
+                    foreach (XAttribute attr in child.Attributes())
+                    {
+                        if (attr.Name == "log") Log.Out("{1}: {0}", attr.Value, xmlFile.Filename);
+                        if (attr.Name == "warn") Log.Warning("{1}: {0}", attr.Value, xmlFile.Filename);
+                        if (attr.Name == "error") Log.Error("{1}: {0}", attr.Value, xmlFile.Filename);
+                        if (attr.Name != "log" && attr.Name != "warn" && attr.Name != "error")
+                            Log.Warning("Echo has no valid name (log, warn or error)");
+                    }
+                }
                 // Otherwise try to apply the patches found in child element
-                else if (!ApplyPatchEntry(xmlFile, patchXml, element, patchName))
+                else if (!ApplyPatchEntry(xmlFile, patchXml, element, patchName, ref stack))
                 {
                     IXmlLineInfo lineInfo = (IXmlLineInfo)element;
                     Log.Warning(string.Format("XML patch for \"{0}\" from mod \"{1}\" did not apply: {2} (line {3} at pos {4})",
-                        xmlFile.Filename, patchName, element.GetElementString(), lineInfo.LineNumber, lineInfo.LinePosition));
+                        xmlFile.Filename, patchName, element.ToString(), lineInfo.LineNumber, lineInfo.LinePosition));
                     result = false;
                 }
             }
@@ -168,16 +240,20 @@ static class ModXmlPatcher
     }
 
     // Flags for consecutive mod-if parsing
-    private static bool IfClauseParsed = false;
-    private static bool PreviousResult = false;
+    public struct ParserStack
+    {
+        public int count;
+        public bool IfClauseParsed;
+        public bool PreviousResult;
+    }
 
     // Entry point instead of (private) `XmlPatcher.singlePatch`
     // Implements conditional patching and also allows includes
-    private static bool ApplyPatchEntry(XmlFile _xmlFile, XmlFile _patchXml, XmlElement _patchElement, string _patchName)
+    private static bool ApplyPatchEntry(XmlFile _xmlFile, XmlFile _patchXml, XElement _patchElement, string _patchName, ref ParserStack stack)
     {
 
         // Only support root level
-        switch (_patchElement.Name)
+        switch (_patchElement.Name.ToString())
         {
 
             case "include":
@@ -189,11 +265,11 @@ static class ModXmlPatcher
             case "modif":
 
                 // Reset flags first
-                IfClauseParsed = true;
-                PreviousResult = false;
+                stack.IfClauseParsed = true;
+                stack.PreviousResult = false;
 
                 // Check if we have true conditions
-                foreach (XmlAttribute attr in _patchElement.Attributes)
+                foreach (XAttribute attr in _patchElement.Attributes())
                 {
                     // Ignore unknown attributes for now
                     if (attr.Name != "condition")
@@ -202,9 +278,9 @@ static class ModXmlPatcher
                         continue;
                     }
                     // Evaluate one or'ed condition
-                    if (EvaluateConditions(attr.Value))
+                    if (EvaluateConditions(attr.Value, _xmlFile))
                     {
-                        PreviousResult = true;
+                        stack.PreviousResult = true;
                         return PatchXml(_xmlFile, _patchXml,
                             _patchElement, _patchName);
                     }
@@ -216,20 +292,17 @@ static class ModXmlPatcher
             case "modelsif":
 
                 // Check for correct parser state
-                if (!IfClauseParsed)
+                if (!stack.IfClauseParsed)
                 {
                     Log.Error("Found <modelsif> clause out of order");
                     return false;
                 }
 
                 // Abort else when last result was true
-                if (PreviousResult) return true;
-
-                // Reset flags first
-                PreviousResult = false;
+                if (stack.PreviousResult) return true;
 
                 // Check if we have true conditions
-                foreach (XmlAttribute attr in _patchElement.Attributes)
+                foreach (XAttribute attr in _patchElement.Attributes())
                 {
                     // Ignore unknown attributes for now
                     if (attr.Name != "condition")
@@ -238,9 +311,9 @@ static class ModXmlPatcher
                         continue;
                     }
                     // Evaluate one or'ed condition
-                    if (EvaluateConditions(attr.Value))
+                    if (EvaluateConditions(attr.Value, _xmlFile))
                     {
-                        PreviousResult = true;
+                        stack.PreviousResult = true;
                         return PatchXml(_xmlFile, _patchXml,
                             _patchElement, _patchName);
                     }
@@ -251,20 +324,17 @@ static class ModXmlPatcher
 
             case "modelse":
 
-                // Abort else when last result was true
-                if (PreviousResult) return true;
-
                 // Reset flags first
-                IfClauseParsed = false;
-                PreviousResult = false;
-
+                stack.IfClauseParsed = false;
+                // Abort else when last result was true
+                if (stack.PreviousResult) return true;
                 return PatchXml(_xmlFile, _patchXml,
                     _patchElement, _patchName);
 
             default:
                 // Reset flags first
-                IfClauseParsed = false;
-                PreviousResult = true;
+                stack.IfClauseParsed = false;
+                stack.PreviousResult = true;
                 // Dispatch to original function
                 return (bool)MethodSinglePatch.Invoke(null,
                     new object[] { _xmlFile, _patchElement, _patchName });
@@ -291,13 +361,13 @@ static class ModXmlPatcher
             // as the game uses a rather old HarmonyX version (2.2).
             // To address this we simply "consume" one of the args.
             if (_patchXml == null) return false;
-            XmlElement element = _patchXml.XmlDoc.DocumentElement;
+            XElement element = _patchXml.XmlDoc.Root;
             if (element == null) return false;
             string version = element.GetAttribute("patcher-version");
             if (!string.IsNullOrEmpty(version))
             {
                 // Check if version is too new for us
-                if (int.Parse(version) > 1) return true;
+                if (int.Parse(version) > 4) return true;
             }
             // Call out to static helper function
             __result = PatchXml(

@@ -186,7 +186,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 	}
 
 	public override bool OnBlockActivated(
-		int _indexInBlockActivationCommands,
+		string _commandName,
 		WorldBase _world,
 		int _cIdx,
 		Vector3i _blockPos,
@@ -194,7 +194,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		EntityAlive _player)
 	{
 		if (!(_world.GetTileEntity(_cIdx, _blockPos) is TileEntityClaimAutoRepair tileEntity)) return false;
-		if (_indexInBlockActivationCommands == 6)
+		if (_commandName == "take")
 		{
 			// Copied from vanilla Block::OnBlockActivated
 			bool flag = this.CanPickup;
@@ -221,13 +221,13 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 			return false;
 
 		}
-		else if (_indexInBlockActivationCommands == 7)
+		else if (_commandName == "turn_claimautorep_off" || _commandName == "turn_claimautorep_on")
 		{
 			tileEntity.IsOn = !tileEntity.IsOn;
 			return true;
 		}
 		else {
-			return base.OnBlockActivated(_indexInBlockActivationCommands, _world, _cIdx, _blockPos, _blockValue, _player);
+			return base.OnBlockActivated(_commandName, _world, _cIdx, _blockPos, _blockValue, _player);
 		}
 	}
 
@@ -257,15 +257,15 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 			playerUi.windowManager.Open("timer", true);
 			XUiC_Timer childByType = playerUi.xui.GetChildByType<XUiC_Timer>();
 			TimerEventData _eventData = new TimerEventData();
-			_eventData.Data = (object) new object[4]
+			_eventData.Data = new object[4]
 			{
-				(object) _cIdx,
-				(object) _blockValue,
-				(object) _blockPos,
-				(object) _player
+				_cIdx,
+				_blockValue,
+				_blockPos,
+				_player
 			};
-			_eventData.Event += new TimerEventHandler(this.EventData_Event);
-			childByType.SetTimer(this.TakeDelay, _eventData);
+			_eventData.Event += new TimerEventHandler(EventData_Event);
+			childByType.SetTimer(TakeDelay, _eventData);
 		}
 	}
 
@@ -296,7 +296,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 			else
 			{
 				LocalPlayerUI uiForPlayer = LocalPlayerUI.GetUIForPlayer(entityPlayerLocal);
-				this.HandleTakeInternalItems(tileEntity, uiForPlayer);
+				HandleTakeInternalItems(tileEntity, uiForPlayer);
 				ItemStack itemStack = new ItemStack(block.ToItemValue(), 1);
 				if (!uiForPlayer.xui.PlayerInventory.AddItem(itemStack))
 				uiForPlayer.xui.PlayerInventory.DropItem(itemStack);

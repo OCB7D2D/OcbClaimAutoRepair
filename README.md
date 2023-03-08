@@ -1,4 +1,4 @@
-# OCB Claim Auto Repair Mod - 7 Days to Die (A20) Addon
+# OCB Claim Auto Repair Mod - 7 Days to Die (A21) Addon
 
 A new block that will automatically repair damaged blocks within your claim.
 Introduces a new block that is based on a storage chest. You need to put in
@@ -77,7 +77,7 @@ NPC doing something similar would be killer, but needs AI and path-finding.
 
 Simply [download here from GitHub][2] and put into your A20 Mods folder:
 
-- https://github.com/OCB7D2D/ClaimAutoRepair/archive/master.zip (master branch)
+- https://github.com/OCB7D2D/OcbClaimAutoRepair/archive/master.zip (master branch)
 
 ## How to compile
 
@@ -95,6 +95,10 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 ```
 
 ## Changelog
+
+### Version 0.8.0
+
+- Update compatibility for 7D2D A21.0(b313)
 
 ### Version 0.7.5
 
@@ -133,6 +137,6 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 - Increased base repair speed from 750 to 2000
 
 [1]: https://github.com/OCB7D2D/A20BepInExPreloader
-[2]: https://github.com/OCB7D2D/ClaimAutoRepair/releases
-[3]: https://github.com/OCB7D2D/ClaimAutoRepair/actions/workflows/ci.yml
-[4]: https://github.com/OCB7D2D/ClaimAutoRepair/actions/workflows/ci.yml/badge.svg
+[2]: https://github.com/OCB7D2D/OcbClaimAutoRepair/releases
+[3]: https://github.com/OCB7D2D/OcbClaimAutoRepair/actions/workflows/ci.yml
+[4]: https://github.com/OCB7D2D/OcbClaimAutoRepair/actions/workflows/ci.yml/badge.svg
