@@ -2,3 +2,5 @@
 /.vs
 .vstags
 *.pdb
+/node_modules
+/package*.json*

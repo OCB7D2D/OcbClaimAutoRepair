@@ -1,9 +1,6 @@
 ﻿<configs patcher-version="4">
-
 	<modif condition="UndeadLegacy_CoreModule">
-
 		<append xpath="/items">
-
 			<item name="ocbBlockClaimAutoRepairBlueprint">
 				<property name="Extends" value="schematicNoQualityMaster"/>
 				<property name="CustomIcon" value="ClaimAutoRepair"/>
@@ -14,9 +11,6 @@
 					<triggered_effect trigger="onSelfPrimaryActionEnd" action="GiveExp" exp="50"/>
 				</effect_group>
 			</item>
-
 		</append>
-
 	</modif>
-
 </configs>

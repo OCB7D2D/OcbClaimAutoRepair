@@ -1,7 +1,5 @@
 <configs>
-
 	<append xpath="/blocks/block[@name='ocbBlockClaimAutoRepair']">
-
 		<property name="UnlockedBy" value="ocbBlockClaimAutoRepairBlueprint"/>
 
 		<property name="CarryWeight" value="2"/>
@@ -26,7 +24,5 @@
 		<drop event="Harvest" name="ulmResourceElectronicCircuitboard" prop="0.2" tag="salvageHarvest"/>
 
 		<drop event="Fall" name="scrapMetalPile" count="1" prob="0.75" stick_chance="1"/>
-
 	</append>
-
 </configs>

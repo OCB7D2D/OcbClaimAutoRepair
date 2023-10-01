@@ -1,10 +1,8 @@
 <configs patcher-version="4">
-
 	<modif condition="UndeadLegacy_CoreModule">
 		<include path="recipes.ulm.xml"/>
 	</modif>
 	<modelse>
 		<include path="recipes.a21.xml"/>
 	</modelse>
-
 </configs>

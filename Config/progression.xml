@@ -1,10 +1,8 @@
 <configs patcher-version="4">
-
 	<modif condition="UndeadLegacy_CoreModule">
 		<!-- unlocks items via schematics only -->
 	</modif>
 	<modelse>
 		<include path="progression.a21.xml"/>
 	</modelse>
-
 </configs>

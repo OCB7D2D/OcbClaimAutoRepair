@@ -1,16 +1,14 @@
 <configs patcher-version="4">
-
 	<append xpath="/blocks">
 		<block name="ocbBlockClaimAutoRepair">
-
 			<property name="CreativeMode" value="Player"/>
 			<property name="Tags" value="safes,hardenedSafe"/>
 			<property name="Class" value="ClaimAutoRepair, ClaimAutoRepair"/>
 			<property name="CustomIcon" value="ClaimAutoRepair"/>
 			<property name="Material" value="Msteel"/>
 			<property name="StabilitySupport" value="true"/>
-			<property name="Shape" value="ModelEntity" />
-			<property name="Model" value="#@modfolder:Resources/ClaimAutoRepair.unity3d?ClaimAutoRepairPrefab" />
+			<property name="Shape" value="ModelEntity"/>
+			<property name="Model" value="#@modfolder:Resources/ClaimAutoRepair.unity3d?ClaimAutoRepairPrefab"/>
 			<property name="IsTerrainDecoration" value="false"/>
 			<property name="Collide" value="movement,melee,bullet,arrow,rocket"/>
 			<property name="LootList" value="storageCrate"/>
@@ -23,7 +21,7 @@
 			<property name="FilterTags" value="floot"/>
 			<property name="DisplayType" value="blockHardened"/>
 
-			<property name="CanPickup" value="true" />
+			<property name="CanPickup" value="true"/>
 			<property name="TakeDelay" value="30"/>
 
 			<property name="ClaimAutoRepairSpeedFactor" value="2000"/>
@@ -36,5 +34,4 @@
 	<modelse>
 		<include path="blocks.a21.xml"/>
 	</modelse>
-
 </configs>

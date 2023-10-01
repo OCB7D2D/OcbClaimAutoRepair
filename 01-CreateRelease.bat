@@ -21,9 +21,9 @@ if not "%1"=="" (
 
 echo create %VERSION%
 
-xcopy *.xml build\%NAME%\
-xcopy *.md build\%NAME%\
 xcopy *.dll build\%NAME%\
+xcopy README.md build\%NAME%\
+xcopy ModInfo.xml build\%NAME%\
 xcopy Config build\%NAME%\Config\ /S
 xcopy Resources build\%NAME%\Resources\ /S
 xcopy UIAtlases build\%NAME%\UIAtlases\ /S
