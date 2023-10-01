@@ -1,0 +1,25 @@
+<configs>
+	<!-- Unlock for laborer class under advanced engineering level 4 (Inventor) -->
+
+	<csv xpath="/progression/perks/perk[@name='perkAdvancedEngineering']/effect_group/passive_effect[@name='RecipeTagUnlocked' and @level='4,5']/@tags" op="add" delim=",">ocbBlockClaimAutoRepair</csv>
+
+	<!-- Unlock for other via workbench perk level 3 (New level after all other workbenches) -->
+
+	<setattribute xpath="/progression/perks/perk[@name='perkWorkbench' and @max_level='2']" name="max_level">3</setattribute>
+	>
+	<append xpath="/progression/perks/perk[@name='perkWorkbench']">
+		<level_requirements level="3">
+			<requirement name="ProgressionLevel" progression_name="perkCraftTools" operation="GTE" value="2" desc_key="reqTools2"/>
+			<requirement name="ProgressionLevel" progression_name="attClassLaborer" operation="LT" value="1" desc_key="reqLaborerLevelNot01"/>
+		</level_requirements>
+	</append>
+
+	<setattribute xpath="/progression/perks/perk[@name='perkWorkbench']/effect_group/passive_effect[@level='1,2']" name="level">1,3</setattribute>
+	>
+	<setattribute xpath="/progression/perks/perk[@name='perkWorkbench']/effect_group/passive_effect[@level='2']" name="level">2,3</setattribute>
+	>
+	<append xpath="/progression/perks/perk[@name='perkWorkbench']/effect_group">
+		<passive_effect name="RecipeTagUnlocked" operation="base_set" level="3" value="1" tags="ocbBlockClaimAutoRepair"/>
+		<effect_description level="3" desc_key="perkWorkbenchRank3Title" long_desc_key="perkWorkbenchRank3Desc"/>
+	</append>
+</configs>

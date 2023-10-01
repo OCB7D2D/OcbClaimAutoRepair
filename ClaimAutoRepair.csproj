@@ -86,6 +86,7 @@
     <Compile Include="Library\ModXmlPatcher.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Config\blocks.a21.df.xml" />
     <Content Include="Config\blocks.a21.xml" />
     <Content Include="Config\blocks.a20.xml" />
     <Content Include="Config\blocks.ulm.xml" />
@@ -94,8 +95,10 @@
     <Content Include="Config\Localization.txt" />
     <Content Include="Config\loot.xml" />
     <Content Include="Config\progression.a20.xml" />
+    <Content Include="Config\progression.a21.df.xml" />
     <Content Include="Config\progression.a21.xml" />
     <Content Include="Config\progression.xml" />
+    <Content Include="Config\recipes.a21.df.xml" />
     <Content Include="Config\recipes.a21.xml" />
     <Content Include="Config\recipes.a20.xml" />
     <Content Include="Config\recipes.ulm.xml" />
