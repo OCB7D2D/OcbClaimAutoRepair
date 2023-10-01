@@ -31,6 +31,9 @@
 	<modif condition="UndeadLegacy_CoreModule">
 		<include path="blocks.ulm.xml"/>
 	</modif>
+	<modelsif condition="DarknessFallsCore">
+		<include path="blocks.a21.df.xml"/>
+	</modelsif>
 	<modelse>
 		<include path="blocks.a21.xml"/>
 	</modelse>

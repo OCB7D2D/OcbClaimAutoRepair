@@ -96,6 +96,10 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 
 ## Changelog
 
+### Version 0.8.1
+
+- Add initial config for darkness falls A21 compatibility
+
 ### Version 0.8.0
 
 - Update compatibility for 7D2D A21.0(b313)

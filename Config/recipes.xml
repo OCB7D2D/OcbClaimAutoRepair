@@ -2,6 +2,9 @@
 	<modif condition="UndeadLegacy_CoreModule">
 		<include path="recipes.ulm.xml"/>
 	</modif>
+	<modelsif condition="DarknessFallsCore">
+		<include path="recipes.a21.df.xml"/>
+	</modelsif>
 	<modelse>
 		<include path="recipes.a21.xml"/>
 	</modelse>

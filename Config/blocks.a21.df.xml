@@ -1,0 +1,18 @@
+<configs>
+	<append xpath="/blocks/block[@name='ocbBlockClaimAutoRepair']">
+		<property name="UnlockedBy" value="perkWorkbench,perkAdvancedEngineering"/>
+
+		<property name="Stacknumber" value="5"/>
+
+		<property class="RepairItems">
+			<property name="resourceForgedSteel" value="40"/>
+			<property name="resourceElectricParts" value="40"/>
+			<property name="resourceMechanicalParts" value="10"/>
+		</property>
+
+		<drop event="Destroy" name="resourceForgedSteel" count="5,10"/>
+		<drop event="Destroy" name="resourceElectricParts" count="5,20" tag="salvageHarvest"/>
+		<drop event="Destroy" name="resourceMechanicalParts" count="5,10" tag="salvageHarvest"/>
+		<drop event="Fall" name="scrapMetalPile" count="1" prob="0.75" stick_chance="1"/>
+	</append>
+</configs>
