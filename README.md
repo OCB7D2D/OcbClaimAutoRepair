@@ -98,7 +98,9 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 
 ### Version 0.8.1
 
-- Add initial config for darkness falls A21 compatibility
+- Add initial config for darkness falls A21 compatibility  
+  Unlocks at laborer class Advanced Engineering Level 4
+  Or with any other class at workbench perk level 3
 
 ### Version 0.8.0
 
