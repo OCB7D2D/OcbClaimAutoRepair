@@ -1,4 +1,4 @@
-﻿<configs patcher-version="4">
+﻿<configs patcher-version="7">
 	<modif condition="UndeadLegacy_CoreModule">
 		<append xpath="/lootcontainers/lootgroup[@name='booksElectrical']">
 			<item name="ocbBlockClaimAutoRepairBlueprint" loot_prob_template="medLow"/>

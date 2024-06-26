@@ -191,7 +191,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		int _cIdx,
 		Vector3i _blockPos,
 		BlockValue _blockValue,
-		EntityAlive _player)
+		EntityPlayerLocal _player)
 	{
 		if (!(_world.GetTileEntity(_cIdx, _blockPos) is TileEntityClaimAutoRepair tileEntity)) return false;
 		if (_commandName == "take")
@@ -264,12 +264,12 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 				_blockPos,
 				_player
 			};
-			_eventData.Event += new TimerEventHandler(EventData_Event);
+			_eventData.Event += new TimerEventHandler(TimedEvent);
 			childByType.SetTimer(TakeDelay, _eventData);
 		}
 	}
 
-	private void EventData_Event(TimerEventData timerData)
+	private void TimedEvent(TimerEventData timerData)
 	{
 		World world = GameManager.Instance.World;
 		object[] data = (object[]) timerData.Data;

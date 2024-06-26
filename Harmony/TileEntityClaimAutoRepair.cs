@@ -276,9 +276,10 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 						if (!IsBlockInsideClaim(world, chunkFromWorldPos, randomPos, playerData, claimSize, true))
 						{
 							// Check if the block is close by, which suggests a missing land claim block?
-							if (Mathf.Abs(randomPos.x - worldPos.x) < claimSize / 2) hadBlockOutside = true;
-							else if (Mathf.Abs(randomPos.y - worldPos.y) < claimSize / 2) hadBlockOutside = true;
-							else if (Mathf.Abs(randomPos.z - worldPos.z) < claimSize / 2) hadBlockOutside = true;
+							if (Mathf.Abs(randomPos.x - worldPos.x) < claimSize / 2 &&
+								Mathf.Abs(randomPos.y - worldPos.y) < claimSize / 2 &&
+								Mathf.Abs(randomPos.z - worldPos.z) < claimSize / 2)
+									hadBlockOutside = true;
 							// Skip it
 							continue;
 						}
@@ -456,8 +457,8 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 						EChatType.Whisper,
 						player.entityId,
 						msg,
-						string.Empty, false,
-						new List<int> { player.entityId });
+						new List<int> { player.entityId },
+						EMessageSender.Server);
 					lastMissingItem = null;
 				}
 
@@ -521,7 +522,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 				// Check if allies should be considered and if ACL is there
 				if (includeAllies == false || playerData.ACL == null) continue;
 				// Now check the actual ACL if player is allied with ourself
-				if (!playerData.ACL.Contains(lpRelative.UserIdentifier)) continue;
+				if (!playerData.ACL.Contains(lpRelative.PrimaryId)) continue;
 			}
 
 			// Get all land-claim blocks of the allied user (or our-self)
