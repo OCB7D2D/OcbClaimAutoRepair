@@ -275,12 +275,13 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 						Chunk chunkFromWorldPos = (Chunk)world.GetChunkFromWorldPos(worldPosI);
 						if (!IsBlockInsideClaim(world, chunkFromWorldPos, randomPos, playerData, claimSize, true))
 						{
-							// Check if the block is close by, which suggests a missing land claim block?
-							if (Mathf.Abs(randomPos.x - worldPos.x) < claimSize / 2) hadBlockOutside = true;
-							else if (Mathf.Abs(randomPos.y - worldPos.y) < claimSize / 2) hadBlockOutside = true;
-							else if (Mathf.Abs(randomPos.z - worldPos.z) < claimSize / 2) hadBlockOutside = true;
-							// Skip it
-							continue;
+                            // Check if the block is close by, which suggests a missing land claim block?
+                            if (Mathf.Abs(randomPos.x - worldPos.x) < claimSize / 2 &&
+                                Mathf.Abs(randomPos.y - worldPos.y) < claimSize / 2 &&
+                                Mathf.Abs(randomPos.z - worldPos.z) < claimSize / 2)
+									hadBlockOutside = true;
+                            // Skip it
+                            continue;
 						}
 						// Play simple click indicating we are working on something
 						world.GetGameManager().PlaySoundAtPositionServer(worldPos,
@@ -456,7 +457,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 						EChatType.Whisper,
 						player.entityId,
 						msg,
-						string.Empty, false,
+						string.Empty,
 						new List<int> { player.entityId });
 					lastMissingItem = null;
 				}
@@ -521,7 +522,7 @@ public class TileEntityClaimAutoRepair : TileEntitySecureLootContainer
 				// Check if allies should be considered and if ACL is there
 				if (includeAllies == false || playerData.ACL == null) continue;
 				// Now check the actual ACL if player is allied with ourself
-				if (!playerData.ACL.Contains(lpRelative.UserIdentifier)) continue;
+				if (!playerData.ACL.Contains(lpRelative.PrimaryId)) continue;
 			}
 
 			// Get all land-claim blocks of the allied user (or our-self)

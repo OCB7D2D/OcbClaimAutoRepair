@@ -27,4 +27,15 @@ public class OcbClaimAutoRepair : IModApi
 		}
 	}
 
+    [HarmonyPatch(typeof(XUiC_LootWindowGroup))]
+    [HarmonyPatch("OnOpen")]
+    public class ASDASDOnOpen
+    {
+        public static bool Prefix(TileEntityLootContainer ___te)
+        {
+			Log.Out("FOOOOOOO =====>>> {0}\n", ___te);
+            return true;
+        }
+    }
+
 }

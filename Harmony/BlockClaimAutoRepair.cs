@@ -186,12 +186,12 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 	}
 
 	public override bool OnBlockActivated(
-		string _commandName,
+        string _commandName,
 		WorldBase _world,
 		int _cIdx,
 		Vector3i _blockPos,
 		BlockValue _blockValue,
-		EntityAlive _player)
+        EntityPlayerLocal _player)
 	{
 		if (!(_world.GetTileEntity(_cIdx, _blockPos) is TileEntityClaimAutoRepair tileEntity)) return false;
 		if (_commandName == "take")
@@ -227,7 +227,9 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 			return true;
 		}
 		else {
-			return base.OnBlockActivated(_commandName, _world, _cIdx, _blockPos, _blockValue, _player);
+            Log.Out("OnBlockEntityTransformAfterActivated\n");
+            Log.Out("OnBlockEntityTransformAfterActivated\n");
+            return base.OnBlockActivated(_commandName, _world, _cIdx, _blockPos, _blockValue, _player);
 		}
 	}
 
@@ -264,12 +266,12 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 				_blockPos,
 				_player
 			};
-			_eventData.Event += new TimerEventHandler(EventData_Event);
+			_eventData.Event += new TimerEventHandler(TimedEvent);
 			childByType.SetTimer(TakeDelay, _eventData);
 		}
 	}
 
-	private void EventData_Event(TimerEventData timerData)
+	private void TimedEvent(TimerEventData timerData)
 	{
 		World world = GameManager.Instance.World;
 		object[] data = (object[]) timerData.Data;

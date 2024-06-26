@@ -11,7 +11,7 @@
 			<property name="Model" value="#@modfolder:Resources/ClaimAutoRepair.unity3d?ClaimAutoRepairPrefab"/>
 			<property name="IsTerrainDecoration" value="false"/>
 			<property name="Collide" value="movement,melee,bullet,arrow,rocket"/>
-			<property name="LootList" value="storageCrate"/>
+			<property name="LootList" value="playerIronWritableStorage"/>
 			<property name="LPHardnessScale" value="8"/>
 			<property name="Group" value="Storage,Building,advBuilding,Blocks,Player"/>
 			<property name="DescriptionKey" value="ocbBlockClaimAutoRepairDesc"/>
@@ -29,12 +29,12 @@
 	</append>
 
 	<modif condition="UndeadLegacy_CoreModule">
-		<include path="blocks.ulm.xml"/>
+		<modinc path="blocks.ulm.xml"/>
 	</modif>
 	<modelsif condition="DarknessFallsCore">
-		<include path="blocks.a21.df.xml"/>
+		<modinc path="blocks.a21.df.xml"/>
 	</modelsif>
 	<modelse>
-		<include path="blocks.a21.xml"/>
+		<modinc path="blocks.a21.xml"/>
 	</modelse>
 </configs>

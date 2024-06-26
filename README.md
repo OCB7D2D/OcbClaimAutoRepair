@@ -1,4 +1,4 @@
-# OCB Claim Auto Repair Mod - 7 Days to Die (A21) Addon
+# OCB Claim Auto Repair Mod - 7 Days to Die (V1.0 exp) Addon
 
 A new block that will automatically repair damaged blocks within your claim.
 Introduces a new block that is based on a storage chest. You need to put in
@@ -75,26 +75,27 @@ NPC doing something similar would be killer, but needs AI and path-finding.
 
 ### Download and Install
 
-Simply [download here from GitHub][2] and put into your A20 Mods folder:
-
-- https://github.com/OCB7D2D/OcbClaimAutoRepair/archive/master.zip (master branch)
+[Download from GitHub releases][2] and extract into your Mods folder!  
+Ensure you don't have double nested folders and ModInfo.xml is at right place!
 
 ## How to compile
 
 I've included a MSVC solution file and also a simple batch file to use my
-[A20BepInEx Utils][1], although BepInEx is NOT needed for this mod, it still
-make compilation a piece of cake if all env-variables are properly configured.
-The MSVC solution files require one environment variable `PATH_7D2D_MANAGED`
-to be set. This is needed in order to find the correct game dlls for the
-compilation. Note that the resulting dlls will be put under
-`build/bin/target/AutoClaimRepair.dll`. You need to move them
-over to the folder root in order for 7D2D to pick it up.
+[Mod Compiler Utils][1]. Both solutions require one environment variable
+`PATH_7D2D_MANAGED` to be set. This is needed in order to find the correct
+game dlls for the compilation. Note that the resulting dlls will be put under
+`build/bin/target/AutoClaimRepair.dll`. It should be copied automatically
+by the MSVC post compile task.
 
 ```batch
 PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed
 ```
 
 ## Changelog
+
+### Version 0.9.0
+
+- First compatibility with V1.0 (exp)
 
 ### Version 0.8.1
 
