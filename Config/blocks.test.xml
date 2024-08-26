@@ -1,0 +1,9 @@
+<configs patcher-version="4">
+	<append xpath="/blocks">
+		<block name="ocbBlockClaimAutoRepairTest">
+			<property name="CreativeMode" value="Player"/>
+			<property name="Extends" value="steelMaster"/>
+			<property name="Class" value="OcbLcbRepairTest, ClaimAutoRepair"/>
+		</block>
+	</append>
+</configs>
