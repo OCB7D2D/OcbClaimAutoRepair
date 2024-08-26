@@ -6,7 +6,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 
 	private Vector2i LootSize = new Vector2i(8, 4);
 
-	private float BoundHelperSize = 2.59f;
+	private float BoundHelperSize = 1.035f;
 
 	private float RepairSpeed = 2000f;
 
