@@ -93,6 +93,10 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 
 ## Changelog
 
+### Version 0.9.2
+
+- Recompile for 7D2D V1.2 stable
+
 ### Version 0.9.1
 
 - Fix issue with bound helper being too big
