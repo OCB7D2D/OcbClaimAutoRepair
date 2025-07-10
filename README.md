@@ -93,6 +93,10 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 
 ## Changelog
 
+### Version 1.0.0
+
+- Update for 7D2D V2.0 (b295)
+
 ### Version 0.9.2
 
 - Recompile for 7D2D V1.2 stable

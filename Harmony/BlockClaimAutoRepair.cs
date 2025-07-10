@@ -98,7 +98,8 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		WorldBase _world,
 		Chunk _chunk,
 		Vector3i _blockPos,
-		BlockValue _blockValue)
+		BlockValue _blockValue,
+		PlatformUserIdentifierAbs _addedByPlayer)
 	{
 		if (_blockValue.ischild || _world.GetTileEntity(_chunk.ClrIdx, _blockPos) is TileEntityClaimAutoRepair)
 			return;
@@ -112,8 +113,7 @@ public class BlockClaimAutoRepair : BlockSecureLoot
 		tileEntity.repairSpeed = RepairSpeed;
 		tileEntity.SetContainerSize(LootSize, false);
 		_chunk.AddTileEntity(tileEntity);
-
-		base.OnBlockAdded(_world, _chunk, _blockPos, _blockValue);
+		base.OnBlockAdded(_world, _chunk, _blockPos, _blockValue, _addedByPlayer);
 		if (GameManager.IsDedicatedServer) return;
 		if (_world.GetTileEntity(_chunk.ClrIdx, _blockPos) is TileEntityClaimAutoRepair tileEntityLandAutoRepair)
 		{

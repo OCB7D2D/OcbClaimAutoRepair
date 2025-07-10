@@ -37,7 +37,7 @@ REM xcopy 99-uninstall-bepinex.bat build\%NAME%\
 
 cd build
 echo Packaging %NAME%-%VERSION%.zip
-powershell Compress-Archive %NAME% %NAME%-%VERSION%-V1.2.zip -Force
+powershell Compress-Archive %NAME% %NAME%-%VERSION%-V2.0.zip -Force
 cd ..
 
 SET RV=%ERRORLEVEL%
