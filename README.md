@@ -1,4 +1,4 @@
-# OCB Claim Auto Repair Mod - 7 Days to Die (V2.1) Addon
+# OCB Claim Auto Repair Mod - 7 Days to Die (V2.3) Addon
 
 A new block that will automatically repair damaged blocks within your claim.
 Introduces a new block that is based on a storage chest. You need to put in
@@ -92,6 +92,10 @@ PATH_7D2D_MANAGED=G:\steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Manage
 ```
 
 ## Changelog
+
+### Version 1.0.1
+
+- Update for 7D2D V2.3 (b9)
 
 ### Version 1.0.0
 
